@@ -1,0 +1,50 @@
+Code	Site
+01	NKI-AVL
+02	Erasmus MC
+03	UMC Utrecht
+04	Meander Medisch Centrum
+05	VUmc
+06	UMC Groningen
+07	Radboudumc
+08	Maastricht UMC
+09	Leids Universitair Medisch Centrum
+10	Elisabeth-TweeSteden Ziekenhuis
+11	Onze Lieve Vrouwe Gasthuis
+12	Amphia Ziekenhuis
+13	Academisch Medisch Centrum
+14	Franciscus Gasthuis & Vlietland
+15	Maasstad Ziekenhuis
+16	VieCuri medisch centrum
+17	Máxima medisch centrum
+18	Spaarne Gasthuis
+19	Rijnstate
+20	Medisch Spectrum Twente
+21	Reinier de Graaf  Gasthuis
+22	Zuyderland Medisch Centrum
+23	Martini Ziekenhuis
+24	MC Slotervaart
+25	Bernhoven
+26	HagaZiekenhuis
+27	Deventer Ziekenhuis
+28	Tergooi
+29	Medisch Centrum Leeuwarden
+30	Ziekenhuis Gelderse Vallei
+31	Nij Smellinghe
+32	Ziekenhuis St Jansdal
+33	Noordwest Ziekenhuisgroep
+34	Isala
+35	St Antonius Ziekenhuis
+36	Bravis Ziekenhuis
+37	Treant Zorggroep
+38	ZGT
+39	Gelre Ziekenhuizen
+40	Rode Kruis Ziekenhuis
+41	Rivas
+42	Groene Hart Ziekenhuis
+43	Catharina Ziekenhuis
+44	Haaglanden Medisch Centrum
+45	Wilhelmina Ziekenhuis Assen
+46	Elkerliek ziekenhuis
+47	Tjongerschans
+48	Flevoziekenhuis
+49	Admiraal de Ruyter Ziekenhuis

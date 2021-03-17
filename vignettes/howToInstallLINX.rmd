@@ -1,0 +1,29 @@
+---
+title: 'Installation of Linx (Nov. 2020)'
+date: '`r Sys.Date()`'
+author: 'Job van Riet'
+vignette: >
+  %\VignetteIndexEntry{Installation of Linx (Nov. 2020)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output:
+  rmdformats::downcute:
+    code_folding: show
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+---
+
+# Download compiled jar of LINX
+```bash
+mkdir /mnt/data/ccbc_environment/software/general/LINX_1.11/
+cd mkdir /mnt/data/ccbc_environment/software/general/LINX_1.11/
+https://github.com/hartwigmedical/hmftools/releases/download/sv-linx-v1.11/sv-linx_v1.11.jar
+```
+
+# Download ENSEMBL annotations.
+```bash
+java -cp sv-linx_v1.11.jar com.hartwig.hmftools.linx.gene.GenerateEnsemblDataCache -ensembl_db "mysql://ensembldb.ensembl.org:3337/homo_sapiens_core_101_37" -ensembl_user "anonymous" -ensembl_pass "" -output_dir /mnt/data/ccbc_environment/software/general/LINX_1.11/ENSEMBLv101/
+```
+
+Download LINE elements, known fusions and fragile site from [HMF](https://nextcloud.hartwigmedicalfoundation.nl/s/LTiKTd8XxBqwaiC?path=%2FHMFTools-Resources%2FLinx).

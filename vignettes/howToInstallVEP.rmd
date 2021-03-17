@@ -1,0 +1,154 @@
+---
+title: 'Installation of VEP (Oct. 2020)'
+date: '`r Sys.Date()`'
+author: 'Job van Riet'
+vignette: >
+  %\VignetteIndexEntry{Installation of VEP (Oct. 2020)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output:
+  rmdformats::downcute:
+    code_folding: show
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+---
+
+
+```{r knitr_init, echo=FALSE, results='asis', cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print = '75')
+opts_chunk$set(echo = FALSE, cache = FALSE, prompt = FALSE, tidy = FALSE, comment = NA, message = FALSE, warning = FALSE)
+opts_knit$set(width = 90)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction.
+
+This document details the installation of VEP (as of Feb. 2020) for GRCh37.
+
+# Installation guide
+
+## Download and install VEP.
+```bash
+# Clone from github.
+git clone https://github.com/Ensembl/ensembl-vep.git
+cd ensembl-vep
+
+# Make directory holding the cache files and VEP plugins.
+mkdir cache
+mkdir Plugins
+
+# Run installer.
+perl INSTALL.pl --AUTO alcf --PLUGINS CADD,FATHMM_MKL --CACHEDIR cache/ --PLUGINSDIR Plugins/ --CONVERT --SPECIES homo_sapiens_vep_101_GRCh37
+
+# Selected 439 as species (homo_sapiens_vep_101_GRCh37.tar.gz)
+# Fasta file: Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz
+# Plugins: CADD, FATHMM_MKL (1 and 2)
+```
+
+## Install requirements for plugins.
+
+### CADD
+```bash
+mkdir /mnt/data/ccbc_environment/software/general/ensembl-vepv101/cache/Plugins/CADD/
+cd /mnt/data/ccbc_environment/software/general/ensembl-vepv101/cache/Plugins/CADD/
+
+# Get the whole genome SNV and InDel files (hg19).
+https://kircherlab.bihealth.org/download/CADD/v1.6/GRCh37/whole_genome_SNVs.tsv.gz
+https://kircherlab.bihealth.org/download/CADD/v1.6/GRCh37/whole_genome_SNVs.tsv.gz.tbi
+
+https://kircherlab.bihealth.org/download/CADD/v1.6/GRCh37/InDels.tsv.gz
+https://kircherlab.bihealth.org/download/CADD/v1.6/GRCh37/InDels.tsv.gz.tbi
+```
+
+### FATHMM_MKL
+```bash
+mkdir /mnt/data/ccbc_environment/software/general/ensembl-vepv101/cache/Plugins/FATHMM_MKL/
+cd /mnt/data/ccbc_environment/software/general/ensembl-vepv101/cache/Plugins/FATHMM_MKL/
+
+# Get the FATHMM_MKL files (hg19).
+wget http://fathmm.biocompute.org.uk/database/fathmm-MKL_Current.tab.gz
+
+# Generate index.
+tabix -f -p bed fathmm-MKL_Current.tab.gz
+```
+
+### gnoMAD
+```bash
+# Retrieve gnoMAD annotations (large files which we will shorten).
+mkdir /mnt/data/ccbc_environment/software/general/ensembl-vepv101/gnoMAD_2.1.1/; cd /mnt/data/ccbc_environment/software/general/ensembl-vepv101/gnoMAD_2.1.1/;
+wget https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz
+wget https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz.tbi
+
+wget https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
+wget https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz.tbi
+
+# Only keep the max. AF fields and variants passing the gnoMAD filters.
+bcftools view -h gnomad.exomes.r2.1.1.sites.vcf.bgz > gnomad.exomes.r2.1.1.sites.AF.vcf
+bcftools view -h gnomad.genomes.r2.1.1.sites.vcf.bgz > gnomad.genomes.r2.1.1.sites.AF.vcf
+
+bcftools view -f PASS gnomad.exomes.r2.1.1.sites.vcf.bgz | bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%QUAL\t%FILTER\tAF=%INFO/AF\n' >> gnomad.exomes.r2.1.1.sites.AF.vcf
+
+bcftools view -f PASS gnomad.genomes.r2.1.1.sites.vcf.bgz | bcftools query -f '%CHROM\t%POS\t%ID\t%REF\t%ALT\t%QUAL\t%FILTER\tAF=%INFO/AF\n' >> gnomad.genomes.r2.1.1.sites.AF.vcf
+
+# Sort and tabix BED file.
+bgzip gnomad.exomes.r2.1.1.sites.AF.vcf
+tabix -p vcf gnomad.exomes.r2.1.1.sites.AF.vcf.gz
+
+bgzip gnomad.genomes.r2.1.1.sites.AF.vcf
+tabix -p vcf gnomad.genomes.r2.1.1.sites.AF.vcf.gz
+
+# Remove original files.
+rm -f gnomad.exomes.r2.1.1.sites.vcf.bgz* gnomad.genomes.r2.1.1.sites.vcf.bgz*
+```
+
+### Clinvar
+```bash
+mkdir -p /mnt/data/ccbc_environment/software/general/ensembl-vepv101/cache/Plugins/ClinVar/
+cd /mnt/data/ccbc_environment/software/general/ensembl-vepv101/cache/Plugins/ClinVar/
+wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar_20201003.vcf.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar_20201003.vcf.gz.tbi
+```
+
+### GENCODE annotations.
+```bash
+# Download latest GENCODE annotations.
+cd /mnt/data/ccbc_environment/general/annotation/hg19/GENCODE/
+wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_35/GRCh37_mapping/gencode.v35lift37.annotation.gtf.gz
+
+# Remove chr-prefix to be in concordance with CPCT-02 / HMF VCF files.
+gunzip gencode.v35lift37.annotation.gtf.gz
+grep -v "#" gencode.v35lift37.annotation.gtf | sort -k1,1 -k4,4n -k5,5n -t$'\t' | sed 's/^chr//' | sed 's/^M/MT/' | bgzip -c > noChrPrefix_gencode.v35lift37.annotation.gtf.gz
+```
+
+Clean-up GENCODE identifiers for use in VEP.
+```R
+
+z <- rtracklayer::import.gff('/mnt/data/ccbc_environment/general/annotation/hg19/GENCODE/noChrPrefix_gencode.v35lift37.annotation.gtf.gz')
+
+# Clean-up identifiers (remove ENSEMBL version number) to make them identical to VEP cache.
+z$gene_id <- gsub('\\..*','', z$gene_id)
+z$transcript_id <- gsub('\\..*','', z$transcript_id)
+z$protein_id <- gsub('\\..*','', z$protein_id)
+z$exon_id <- gsub('\\..*','', z$exon_id)
+
+# Export data (and run bgzip + tabix).
+rtracklayer::export.gff(z, con = '/mnt/data/ccbc_environment/general/annotation/hg19/GENCODE/noChrPrefix_VEP_gencode.v35lift37.annotation.gtf')
+```
+
+```bash
+bgzip -c noChrPrefix_VEP_gencode.v35lift37.annotation.gtf > noChrPrefix_VEP_gencode.v35lift37.annotation.gtf.gz
+tabix -p gff noChrPrefix_VEP_gencode.v35lift37.annotation.gtf.gz
+```
+
+
+## Run command
+
+VEP commands can now be run using the R2CPCT::performVEP() function.

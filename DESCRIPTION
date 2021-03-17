@@ -1,0 +1,68 @@
+Package: R2CPCT
+Date: 2021-03-17
+Type: Package
+Title: Misc. functions to perform import and analysis of WGS and RNA-Seq samples
+Description: This package holds various R functions to perform analysis on samples derived from the CPCT-02 study.
+Version: 0.3.0
+Author: c( person('Job', 'van Riet', email = 'j.vanriet@erasmusmc.nl', role = c('aut', 'cre'))
+Maintainer: Job van Riet <j.vanriet@erasmusmc.nl>
+License: GPL-3
+LazyData: TRUE
+Encoding: UTF-8
+Depends:
+    plyr (>= 1.8.6),
+    dplyr (>= 1.0.3),
+    R (>= 4.0.3)
+BugReports: https://bitbucket.org/erasmus-mc-medical-oncology/r2cpct/issues
+Imports:
+    devtools (>= 2.3.2),
+    XLConnect (>= 1.0.1),
+    ggplot2 (>= 3.3.3),
+    testthat (>= 3.0.1),
+    ParallelLogger (>= 2.0.1),
+    magrittr (>= 2.0.1),
+    RCurl (>= 1.98.1.2),
+    pbapply (>= 1.4.3),
+    checkmate (>= 2.0.0),
+    data.table (>= 1.13.6),
+    circlize (>= 0.4.12),
+    stringi (>= 1.5.3),
+    tibble (>= 3.0.5),
+    stats (>= 4.0.3),
+    utils (>= 4.0.3),
+    Hmisc (>= 4.4.2),
+    ggtext (>= 0.1.1),
+    gtools (>= 3.8.2),
+    bookdown (>= 0.21),
+    DESeq2 (>= 1.30.0),
+    IHW (>= 1.18.0),
+    slam (>= 0.1.48),
+    fdrtool (>= 1.2.16)
+Remotes: 
+    github::im3sanger/dndscv,
+    github::UMCUGenetics/CHORD,
+    github::parklab/ShatterSeek,
+    github::UMCUGenetics/MutationalPatterns,
+    github::juba/rmdformats,
+    bioc::3.12/Gviz,
+    bioc::3.12/Biostrings,
+    bioc::3.12/DESeq2,
+    bioc::3.12/Biobase,
+    bioc::3.12/rtracklayer,
+    bioc::3.12/GenomeInfoDb,
+    bioc::3.12/GenomicRanges,
+    bioc::3.12/IRanges,
+    bioc::3.12/S4Vectors,
+    bioc::3.12/VariantAnnotation,
+    bioc::3.12/BiocGenerics,
+    bioc::3.12/MutationalPatterns,
+    bioc::3.12/Rsamtools,
+    bioc::3.12/GenomicAlignments,
+    bioc::3.12/graph,
+    bioc::3.12/StructuralVariantAnnotation
+RoxygenNote: 7.1.1
+Suggests:
+    knitr,
+    rmarkdown,
+    BSgenome.Hsapiens.UCSC.hg19
+VignetteBuilder: knitr
