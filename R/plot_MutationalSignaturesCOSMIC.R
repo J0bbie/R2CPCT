@@ -20,7 +20,7 @@ plotMutationalSignaturesCOSMIC <- function(mutSigs, orderSamples = NULL, minCont
     checkmate::assertNumber(minContrib)
     checkmate::assertNumber(minMutants, null.ok = T)
     checkmate::assertLogical(combineSigs)
-    checkmate::assertCharacter(focusOnSig)
+    checkmate::assertCharacter(focusOnSig, null.ok = T)
     checkmate::assertLogical(onlyShowFocus)
 
     sprintf('\tPlotting Mutational Signatures (COSMIC).') %>% ParallelLogger::logInfo()
@@ -56,7 +56,6 @@ plotMutationalSignaturesCOSMIC <- function(mutSigs, orderSamples = NULL, minCont
             dplyr::ungroup()
 
     }
-
 
     # Filter on min. contribution.
     mutSigs.Rel <- mutSigs.Rel %>%
@@ -163,7 +162,7 @@ plotMutationalSignaturesCOSMIC <- function(mutSigs, orderSamples = NULL, minCont
     plot <- ggplot2::ggplot(mutSigs.Rel, ggplot2::aes(x = sampleId, y = relContribution / 100, fill = proposedAetiology)) +
         ggplot2::geom_bar(stat = 'identity', lwd = .33, color = 'black', width = .8) +
         ggplot2::labs(y = 'Mut. Signatures<br><span style = "font-size:5pt">(Genome-wide)</span>', x = NULL) +
-        ggplot2::scale_y_continuous(expand = c(0,0), labels = scales::percent, limits = c(0, ceiling(max(mutSigs.Rel$relContribution*2)) / 2 / 100)) +
+        ggplot2::scale_y_continuous(expand = c(0,0), labels = scales::percent, limits = c(0, ifelse(onlyShowFocus, ceiling(max(mutSigs.Rel$relContribution*2)) / 2 / 100, 1.0001))) +
         ggplot2::scale_fill_manual(values = colors, guide = ggplot2::guide_legend(title = 'Mutational Signatures (COSMIC v3.1)', title.position = 'top', title.hjust = 0.5, ncol = 2, keywidth = 0.5, keyheight = 0.5), name = NULL) +
         ggplot2::theme(
             legend.position = 'right',
