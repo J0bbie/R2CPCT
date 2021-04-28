@@ -12,7 +12,7 @@ Encoding: UTF-8
 Depends:
     plyr (>= 1.8.6),
     dplyr (>= 1.0.3),
-    R (>= 4.0.3)
+    R (>= 4.0)
 BugReports: https://bitbucket.org/erasmus-mc-medical-oncology/r2cpct/issues
 Imports:
     devtools (>= 2.3.2),
