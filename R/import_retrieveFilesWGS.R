@@ -45,10 +45,16 @@ retrieveFilesWGS <- function(pathHMF, pathOutput, cpctIds){
     files$purple <- files$purple[!grepl('range.tsv', files$purple)]
 
     # Driver files.
-    files$driverCatalog <- list.files(pathHMF, pattern = paste(paste0(cpctIds, '\\.driver.catalog.tsv'), collapse = '|'), full.names = T, recursive = T)
+    files$driverCatalog <- list.files(pathHMF, pattern = paste(paste0(cpctIds, '\\.driver.catalog.*tsv'), collapse = '|'), full.names = T, recursive = T)
+
+    # LINX.
+    files$fusion <- list.files(pathHMF, pattern = paste(paste0(cpctIds, '\\.linx.fusion.tsv'), collapse = '|'), full.names = T, recursive = T)
+
+    # LINX drivers.
+    files$linxDriver <- list.files(pathHMF, pattern = paste(paste0(cpctIds, '\\.linx.drivers.tsv'), collapse = '|'), full.names = T, recursive = T)
 
     # Generate symlinks.
-    symInfo <- base::file.symlink(from = base::unique(c(files$somaticVCF, files$purple, files$driverCatalog)), to = pathOutput)
+    symInfo <- base::file.symlink(from = base::unique(c(files$somaticVCF, files$purple, files$driverCatalog, files$fusion, files$linxDriver)), to = pathOutput)
 
 
     # Return statement --------------------------------------------------------

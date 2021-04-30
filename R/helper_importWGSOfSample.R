@@ -36,7 +36,7 @@ importWGSOfSample <- function(cpctId, inputFolder){
     dataSample$structuralVariants <- R2CPCT::importStructuralVariantsPURPLE(pathSV = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.purple.sv.vcf.gz$')))
 
     # Import the HMF driver catalog.
-    dataSample$driverCatalog <- R2CPCT::importdriverCatalogHMF(pathCatalog = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.driver.catalog.tsv$')))
+    dataSample$driverCatalog <- R2CPCT::importdriverCatalogHMF(pathCatalog = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.driver.catalog.*tsv$')))
 
     # Import the purity statistics.
     dataSample$purityStats <- R2CPCT::importPurityStatsPURPLE(pathStats = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.purple.purity.tsv$')))
