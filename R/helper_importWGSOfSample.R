@@ -33,7 +33,10 @@ importWGSOfSample <- function(cpctId, inputFolder){
     dataSample$somaticVariants <- R2CPCT::importSomaticVariantsVEP(pathVCF = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.purple.somatic.vep.vcf.gz$')))
 
     # Import the VCF files containing the somatic structural variants (SV).
-    dataSample$structuralVariants <- R2CPCT::importStructuralVariantsPURPLE(pathSV = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.purple.sv.vcf.gz$')))
+    svFiles <- base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.purple.sv.*vcf.gz$'))
+    svFiles <- base::ifelse(length(svFiles) > 1, svFiles[1], svFiles)
+
+    dataSample$structuralVariants <- R2CPCT::importStructuralVariantsPURPLE(pathSV = svFiles)
 
     # Import the HMF driver catalog.
     dataSample$driverCatalog <- R2CPCT::importdriverCatalogHMF(pathCatalog = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.driver.catalog.*tsv$')))

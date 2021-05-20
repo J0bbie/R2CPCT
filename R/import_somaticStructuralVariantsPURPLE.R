@@ -34,10 +34,14 @@ importStructuralVariantsPURPLE <- function(pathSV, passOnly = T){
         base::suppressWarnings(StructuralVariantAnnotation::breakpointRanges(sample.SV.VCF, unpartneredBreakends = T))
     )
 
+    # Only count each event once.
+    sample.SV <- sample.SV[!duplicated(sample.SV$sourceId),]
+
     # Retrieve the information of the SV and remove duplicate fields.
     infoSV <- VariantAnnotation::info(sample.SV.VCF)
     infoSV <- infoSV[!base::toupper(base::colnames(infoSV)) %in% base::toupper(base::colnames(S4Vectors::mcols(sample.SV)))]
-    infoSV$sourceId <- S4Vectors::rownames(infoSV)
+    infoSV$sourceId <- base::rownames(sample.SV.VCF)
+    infoSV <- infoSV[!duplicated(infoSV$sourceId),]
 
     # Sort in the same order.
     infoSV <- infoSV[base::order(infoSV$sourceId),]
@@ -52,6 +56,9 @@ importStructuralVariantsPURPLE <- function(pathSV, passOnly = T){
         sample.SV <- sample.SV[sample.SV$FILTER == 'PASS']
         sprintf('\tRetaining %s / %s PASS-only somatic structural variants.', base::length(sample.SV), totalPriorPass) %>% ParallelLogger::logInfo()
     }
+
+    # If no SV are left post-filtering, return NULL.
+    if(base::length(sample.SV) == 0) return(NULL)
 
 
     # Determine SV-type -------------------------------------------------------
