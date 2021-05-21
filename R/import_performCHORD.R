@@ -17,7 +17,7 @@ performCHORD <- function(somaticVariants, structuralVariants){
     # Input validation --------------------------------------------------------
 
     checkmate::assertClass(somaticVariants, 'VRanges')
-    checkmate::assertClass(structuralVariants, 'GRanges')
+    checkmate::assertClass(structuralVariants, 'GRanges', null.ok = T)
 
     sprintf('Running CHORD (HRD prediction) for: %s', unique(somaticVariants$sample)) %>% ParallelLogger::logInfo()
 
@@ -40,8 +40,12 @@ performCHORD <- function(somaticVariants, structuralVariants){
             alt = as.character(alt),
         )
 
-    df.SV <- structuralVariants[!duplicated(structuralVariants$EVENT) & !structuralVariants$SVTYPE %in% c('INS', 'SINGLE'),]
-    df.SV <- data.frame(sv_type = df.SV$SVTYPE, sv_len = abs(df.SV$svLen))
+    if(!is.null(structuralVariants)){
+        df.SV <- structuralVariants[!duplicated(structuralVariants$EVENT) & !structuralVariants$SVTYPE %in% c('INS', 'SINGLE'),]
+        df.SV <- data.frame(sv_type = df.SV$SVTYPE, sv_len = abs(df.SV$svLen))
+    }else{
+        df.SV = data.frame()
+    }
 
     # Retrieve CHORD contexts.
     contexts <- CHORD::extractSigsChord(

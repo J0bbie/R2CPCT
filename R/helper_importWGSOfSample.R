@@ -34,7 +34,7 @@ importWGSOfSample <- function(cpctId, inputFolder){
 
     # Import the VCF files containing the somatic structural variants (SV).
     svFiles <- base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.purple.sv.*vcf.gz$'))
-    svFiles <- base::ifelse(length(svFiles) > 1, svFiles[1], svFiles)
+    svFiles <- base::ifelse(base::length(svFiles) > 1, svFiles[1], svFiles)
 
     dataSample$structuralVariants <- R2CPCT::importStructuralVariantsPURPLE(pathSV = svFiles)
 
@@ -64,7 +64,9 @@ importWGSOfSample <- function(cpctId, inputFolder){
 
     # Run ShatterSeek ---------------------------------------------------------
 
-    dataSample$shatterSeek <- R2CPCT::performShatterSeek(copyNumbers = dataSample$copyNumbers, structuralVariants = dataSample$structuralVariants)
+    if(!is.null(dataSample$structuralVariants)){
+        dataSample$shatterSeek <- R2CPCT::performShatterSeek(copyNumbers = dataSample$copyNumbers, structuralVariants = dataSample$structuralVariants)
+    }
 
 
     # Return statement --------------------------------------------------------
