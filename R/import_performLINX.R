@@ -38,13 +38,13 @@ performLINX <- function(pathCombined, cpctIds, nThreads, dryRun = T){
         # Retrieve path to PURPLE/GRIDSS SV file.
         svFile <- base::list.files(pathCombined, full.names = T, pattern = paste0(cpctId, '\\.purple.sv.*vcf.gz$'))
 
-        sprintf('java -jar /mnt/data/ccbc_environment/software/general/LINX_1.11/sv-linx_v1.11.jar
+        sprintf('java -jar /mnt/data/ccbc_environment/software/general/LINX_1.15/sv-linx_v1.15.jar
         -sample %s -sv_vcf %s -purple_dir %s -output_dir %s -check_fusions -check_drivers
-        -known_fusion_file /mnt/data/ccbc_environment/software/general/LINX_1.11/known_fusion_data.csv
-        -gene_transcripts_dir /mnt/data/ccbc_environment/software/general/LINX_1.11/ENSEMBLv101/
-        -fragile_site_file /mnt/data/ccbc_environment/software/general/LINX_1.11/fragile_sites_hmf.hg19.csv
-        -line_element_file /mnt/data/ccbc_environment/software/general/LINX_1.11/line_elements.hg19.csv
-        -viral_hosts_file /mnt/data/ccbc_environment/software/general/LINX_1.11/viral_host_ref.csv',
+        -known_fusion_file /mnt/data/ccbc_environment/software/general/LINX_1.15/known_fusion_data.csv
+        -gene_transcripts_dir /mnt/data/ccbc_environment/software/general/LINX_1.15/ENSEMBLv101/
+        -fragile_site_file /mnt/data/ccbc_environment/software/general/LINX_1.15/fragile_sites_hmf.hg19.csv
+        -line_element_file /mnt/data/ccbc_environment/software/general/LINX_1.15/line_elements.hg19.csv
+        -viral_hosts_file /mnt/data/ccbc_environment/software/general/LINX_1.15/viral_host_ref.csv',
                 cpctId, svFile, pathCombined, pathCombined) %>% gsub('\n', '', .)
     }))
 

@@ -30,7 +30,7 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     checkmate::checkList(data.Cohort)
     checkmate::checkList(dNdS)
     checkmate::checkList(GISTIC2)
-    checkmate::checkInteger(nThreads)
+    checkmate::checkNumber(nThreads)
     checkmate::checkLogical(mutantsOnly)
 
     base::sprintf('Generating per-sample gene-level overview of various aberrations for %s samples.', dplyr::n_distinct(data.Cohort$somaticVariants$sample)) %>% ParallelLogger::logInfo()
@@ -223,11 +223,14 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     base::sprintf('Adding driver status based on HMF/LINX determination and presence in our custom driver-list.') %>% ParallelLogger::logInfo()
 
     # Add status of LINX aberrations (determined per sample).
-    combinedReport.Final <- combinedReport.Final %>% dplyr::left_join(somaticData$driverLINX %>% dplyr::distinct(ENSEMBL, sample, event.LINX = eventType), by = c('ENSEMBL', 'sample'))
+    if(base::nrow(somaticData$driverLINX) > 0){
+        combinedReport.Final <- combinedReport.Final %>% dplyr::left_join(somaticData$driverLINX %>% dplyr::distinct(ENSEMBL, sample, event.LINX = eventType), by = c('ENSEMBL', 'sample'))
+    }
 
     # Add status of HMF driver-determination (determined per sample).
-    combinedReport.Final <- combinedReport.Final %>% dplyr::left_join(somaticData$driverCatalogHMF %>% dplyr::distinct(ENSEMBL, sample, event.HMF = driver), by = c('ENSEMBL', 'sample'))
-
+    if(base::nrow(somaticData$driverCatalogHMF) > 0){
+        combinedReport.Final <- combinedReport.Final %>% dplyr::left_join(somaticData$driverCatalogHMF %>% dplyr::distinct(ENSEMBL, sample, event.HMF = driver), by = c('ENSEMBL', 'sample'))
+    }
     # Add presence within our own combined driver list.
     driverList <- tibble::as_tibble(S4Vectors::mcols(R2CPCT::driverList)) %>% dplyr::distinct(ENSEMBL, DriverDatabases = SOURCE)
     combinedReport.Final <- combinedReport.Final %>% dplyr::left_join(driverList, by = c('ENSEMBL'))
