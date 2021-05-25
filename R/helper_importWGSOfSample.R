@@ -39,10 +39,7 @@ importWGSOfSample <- function(cpctId, inputFolder){
     dataSample$structuralVariants <- R2CPCT::importStructuralVariantsPURPLE(pathSV = svFiles)
 
     # Import the HMF driver catalog.
-    driverFiles <- base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.driver.catalog.*tsv$'))
-    driverFiles <- base::ifelse(base::length(driverFiles) > 1, driverFiles[1], driverFiles)
-
-    dataSample$driverCatalog <- R2CPCT::importdriverCatalogHMF(pathCatalog = driverFiles)
+    dataSample$driverCatalog <- R2CPCT::importdriverCatalogHMF(pathCatalog = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.driver.catalog.somatic.tsv$')))
 
     # Import the purity statistics.
     dataSample$purityStats <- R2CPCT::importPurityStatsPURPLE(pathStats = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.purple.purity.tsv$')))
@@ -57,7 +54,7 @@ importWGSOfSample <- function(cpctId, inputFolder){
     dataSample$fusionsLINX <- R2CPCT::importLINXFusions(pathFusions = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.linx.fusion.tsv$')))
 
     # Import LINX - Drivers.
-    dataSample$driverLINX <- R2CPCT::importLINXDrivers(pathDrivers = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.linx.drivers.tsv$')))
+    dataSample$driverLINX <- R2CPCT::importLINXDrivers(pathDrivers = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.linx.driver.catalog.tsv$')))
 
 
     # RUN CHORD ---------------------------------------------------------------

@@ -24,7 +24,7 @@ importLINXDrivers <- function(pathDrivers){
     sprintf('Importing LINX driver-events: %s', pathDrivers) %>% ParallelLogger::logInfo()
 
     # Clean seqlevels and add chromosome information.
-    sample.Drivers <- readr::read_tsv(file = pathDrivers, col_types = 'ccc')
+    sample.Drivers <- readr::read_tsv(file = pathDrivers, col_types = 'ccccccccccccccccccccccccccccccccccccccccccc')
 
     # Add sample name
     sample.Drivers$sample <- base::factor(base::gsub('\\.linx.*', '', base::basename(pathDrivers)))
