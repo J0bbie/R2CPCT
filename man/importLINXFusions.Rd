@@ -26,7 +26,6 @@ Import detected fusions by LINX.
 Other CPCT: 
 \code{\link{detectKataegis}()},
 \code{\link{findCPCTCenter}()},
-\code{\link{importLINXDrivers}()},
 \code{\link{importPurityStatsPURPLE}()},
 \code{\link{importSomaticCopynumberPURPLE}()},
 \code{\link{importSomaticVariantsVEP}()},

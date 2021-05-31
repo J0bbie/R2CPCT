@@ -32,7 +32,6 @@ Imports all the WGS data of multiple samples (cohort).
 Other CPCT: 
 \code{\link{detectKataegis}()},
 \code{\link{findCPCTCenter}()},
-\code{\link{importLINXDrivers}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},
 \code{\link{importSomaticCopynumberPURPLE}()},

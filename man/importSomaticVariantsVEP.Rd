@@ -46,7 +46,6 @@ Imports the VCF obtained from HMF and further annotated by VEP.
 Other CPCT: 
 \code{\link{detectKataegis}()},
 \code{\link{findCPCTCenter}()},
-\code{\link{importLINXDrivers}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},
 \code{\link{importSomaticCopynumberPURPLE}()},

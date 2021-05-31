@@ -222,11 +222,6 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
 
     base::sprintf('Adding driver status based on HMF/LINX determination and presence in our custom driver-list.') %>% ParallelLogger::logInfo()
 
-    # Add status of LINX aberrations (determined per sample).
-    if(base::nrow(somaticData$driverLINX) > 0){
-        combinedReport.Final <- combinedReport.Final %>% dplyr::left_join(somaticData$driverLINX %>% dplyr::distinct(ENSEMBL, sample, event.LINX = eventType), by = c('ENSEMBL', 'sample'))
-    }
-
     # Add status of HMF driver-determination (determined per sample).
     if(base::nrow(somaticData$driverCatalogHMF) > 0){
         combinedReport.Final <- combinedReport.Final %>% dplyr::left_join(somaticData$driverCatalogHMF %>% dplyr::distinct(ENSEMBL, sample, event.HMF = driver), by = c('ENSEMBL', 'sample'))
@@ -287,7 +282,7 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
 
     if(mutantsOnly){
         combinedReport.Final <- combinedReport.Final %>%
-            dplyr::filter(isMutant | !is.na(event.LINX) | !is.na(event.HMF)) %>%
+            dplyr::filter(isMutant | !is.na(event.HMF)) %>%
             base::droplevels()
     }
 

@@ -25,7 +25,6 @@ Find corresponding center based on CPCT number.
 \seealso{
 Other CPCT: 
 \code{\link{detectKataegis}()},
-\code{\link{importLINXDrivers}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},
 \code{\link{importSomaticCopynumberPURPLE}()},

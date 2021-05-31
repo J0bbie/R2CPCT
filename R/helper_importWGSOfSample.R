@@ -39,7 +39,10 @@ importWGSOfSample <- function(cpctId, inputFolder){
     dataSample$structuralVariants <- R2CPCT::importStructuralVariantsPURPLE(pathSV = svFiles)
 
     # Import the HMF driver catalog.
-    dataSample$driverCatalog <- R2CPCT::importdriverCatalogHMF(pathCatalog = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.driver.catalog.somatic.tsv$')))
+    driverPath <- base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.driver.catalog.somatic.tsv$'))
+    if(S4Vectors::isEmpty(driverPath)) driverPath <- base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.driver.catalog.tsv$'))
+
+    dataSample$driverCatalog <- R2CPCT::importdriverCatalogHMF(pathCatalog = driverPath)
 
     # Import the purity statistics.
     dataSample$purityStats <- R2CPCT::importPurityStatsPURPLE(pathStats = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.purple.purity.tsv$')))
@@ -52,9 +55,6 @@ importWGSOfSample <- function(cpctId, inputFolder){
 
     # Import LINX - Fusions.
     dataSample$fusionsLINX <- R2CPCT::importLINXFusions(pathFusions = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.linx.fusion.tsv$')))
-
-    # Import LINX - Drivers.
-    dataSample$driverLINX <- R2CPCT::importLINXDrivers(pathDrivers = base::list.files(inputFolder, full.names = T, pattern = paste0(cpctId, '\\.linx.driver.catalog.tsv$')))
 
 
     # RUN CHORD ---------------------------------------------------------------
@@ -121,7 +121,6 @@ importWGSOfCohort <- function(cpctIds, inputFolder, nThreads = 1, performAggrega
         data.AllSamples$driverCatalog <- dplyr::bind_rows(base::lapply(data.PerSample, function(x) x$driverCatalog))
         data.AllSamples$purityStats <- dplyr::bind_rows(base::lapply(data.PerSample, function(x) x$purityStats))
         data.AllSamples$fusionsLINX <- dplyr::bind_rows(base::lapply(data.PerSample, function(x) x$fusionsLINX))
-        data.AllSamples$driverLINX <- dplyr::bind_rows(base::lapply(data.PerSample, function(x) x$driverLINX))
         data.AllSamples$CHORD <- dplyr::bind_rows(base::lapply(data.PerSample, function(x) x$CHORD$results))
         data.AllSamples$CHORD.contexts <- dplyr::bind_rows(base::lapply(data.PerSample, function(x) tibble::as_tibble(x$CHORD$contexts, rownames = 'sample')))
         data.AllSamples$shatterSeek <- dplyr::bind_rows(base::lapply(data.PerSample, function(x) x$shatterSeek))

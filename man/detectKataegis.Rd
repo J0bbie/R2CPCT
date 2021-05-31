@@ -32,7 +32,6 @@ detectKataegis(mutData, min.snvs = 5, maxMeanDistance = 1E3, maxk = 6)
 \seealso{
 Other CPCT: 
 \code{\link{findCPCTCenter}()},
-\code{\link{importLINXDrivers}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},
 \code{\link{importSomaticCopynumberPURPLE}()},
