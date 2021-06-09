@@ -162,7 +162,7 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     combinedReport.Muts <- somaticData$somaticVariants %>%
 
         # Only retain the protein-coding somatic mutations.
-        dplyr::filter(!is.na(ANN.HGVSp) | grepl('splice', ANN.Consequence), base::grepl('protein_coding', ANN.BIOTYPE), ANN.Consequence != 'synonymous_variant') %>%
+        dplyr::filter(!is.na(ANN.HGVSp) | grepl('splice', ANN.Consequence), base::grepl('protein_coding', ANN.BIOTYPE), !ANN.Consequence %in% c('synonymous_variant', 'splice_region_variant')) %>%
         dplyr::mutate(ANN.Existing_variation = as.character(ANN.Existing_variation)) %>%
 
         # Per sample, summarize the gene-level information.

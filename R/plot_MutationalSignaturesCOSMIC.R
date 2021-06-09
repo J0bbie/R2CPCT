@@ -1,4 +1,4 @@
-#' @title Generates a mutational signature plot.
+#' @title Generates a mutational signature plot (COSMIC signatures).
 #'
 #' @param mutSigs (list): A list containing the data of the mutational reconstruction (of either the SNV, InDel or DBS) from \code{\link{fitMutSigs}}.
 #' @param orderSamples (character): Specific ordering of samples.
