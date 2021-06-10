@@ -1,9 +1,9 @@
 Package: R2CPCT
-Date: 2021-03-17
+Date: 2021-06-10
 Type: Package
 Title: Misc. functions to perform import and analysis of WGS and RNA-Seq samples
 Description: This package holds various R functions to perform analysis on samples derived from the CPCT-02 study.
-Version: 0.3.0
+Version: 0.3.1
 Author: c( person('Job', 'van Riet', email = 'j.vanriet@erasmusmc.nl', role = c('aut', 'cre'))
 Maintainer: Job van Riet <j.vanriet@erasmusmc.nl>
 License: GPL-3
