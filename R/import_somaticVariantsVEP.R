@@ -83,7 +83,7 @@ importSomaticVariantsVEP <- function(pathVCF, passOnly = T, gnomADe = 0.001, gno
     varInfo$ANN.SYMBOL <- base::ifelse(is.na(commonSYMBOL), varInfo$ANN.SYMBOL, commonSYMBOL)
 
     # Convert all columns.
-    varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = tidyselect::everything(), .fns = utils::type.convert))
+    varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = tidyselect::everything(), .fns = utils::type.convert, as.is = T))
 
     # Convert columns with >50 levels into characters.
     varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = base::colnames(varInfo[base::sapply(varInfo, function(x) base::length(base::levels(x))) >= 50]), .fns = base::as.character))

@@ -260,6 +260,8 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
 
     # Determine structural variant in coding regions --------------------------
 
+    base::sprintf('Determining overlap of structural variants with coding regions.') %>% ParallelLogger::logInfo()
+
     combinedReport.Final <- combinedReport.Final %>%
         dplyr::group_by(sample, SYMBOL, ENSEMBL) %>%
         dplyr::mutate(Consequence.SV = base::ifelse((Consequence.CNA.Exons.Del > 0 | Consequence.CNA.Exons.Amp > 0) & !grepl('Deep', Consequence.CNA), 'Structural Variant', NA)) %>%
@@ -267,6 +269,8 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
 
 
     # Determine mutants. ------------------------------------------------------
+
+    base::sprintf('Determining mutants, per gene and sample.') %>% ParallelLogger::logInfo()
 
     combinedReport.Final <- combinedReport.Final %>%
         dplyr::mutate(
@@ -281,6 +285,8 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     # Filter on mutants-only --------------------------------------------------
 
     if(mutantsOnly){
+        base::sprintf('Retaining mutants-only.') %>% ParallelLogger::logInfo()
+
         combinedReport.Final <- combinedReport.Final %>%
             dplyr::filter(isMutant | !is.na(event.HMF)) %>%
             base::droplevels()
