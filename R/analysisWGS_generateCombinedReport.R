@@ -111,8 +111,8 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
             dplyr::mutate(
                 Consequence.CNA = base::ifelse(
                     gender == 'MALE' & chr %in% c('chrX', 'chrY'),
-                    base::as.character(base::cut(copyNumber.Mean, c(-Inf, base::max(c(0.75, (unique(ploidy) - 1) / 3)), (unique(ploidy) - 1) / 1.5, (1.5 * (unique(ploidy) - 1)), min(15, (3 * (unique(ploidy) - 1))), Inf), labels = c('Deep Deletion', 'Deletion', 'Neutral', 'Amplification' ,'Deep Amplification'))),
-                    base::as.character(base::cut(copyNumber.Mean, c(-Inf, base::max(c(0.75, (unique(ploidy)) / 3)), (unique(ploidy)) / 1.5, (1.5 * (unique(ploidy))), min(15, (3 * (unique(ploidy)))), Inf), labels = c('Deep Deletion', 'Deletion', 'Neutral', 'Amplification' ,'Deep Amplification')))
+                    base::as.character(base::cut(copyNumber.Mean, c(-Inf, base::max(c(ifelse((unique(ploidy) - 1) / 2 <= 0.75, ((unique(ploidy) - 1) / 2) / 2, 0.75), (unique(ploidy) - 1) / 3)), (unique(ploidy) - 1) / 1.5, (1.5 * (unique(ploidy) - 1)), min(15, (3 * (unique(ploidy) - 1))), Inf), labels = c('Deep Deletion', 'Deletion', 'Neutral', 'Amplification' ,'Deep Amplification'))),
+                    base::as.character(base::cut(copyNumber.Mean, c(-Inf, base::max(c(ifelse((unique(ploidy)) / 2 <= 0.75, (unique(ploidy) / 2) / 2, 0.75), (unique(ploidy)) / 3)), (unique(ploidy)) / 1.5, (1.5 * (unique(ploidy))), min(15, (3 * (unique(ploidy)))), Inf), labels = c('Deep Deletion', 'Deletion', 'Neutral', 'Amplification' ,'Deep Amplification')))
                 )
             ) %>%
             # Determine LOH status.
@@ -126,8 +126,8 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
             dplyr::mutate(
                 Consequence.CNA.Exons = base::ifelse(
                     gender == 'MALE' & chr %in% c('chrX', 'chrY'),
-                    base::list(base::as.character(base::cut(base::unlist(copyNumbers.Exons), c(-Inf, base::max(c(0.75, (unique(ploidy) - 1) / 3)), (unique(ploidy) - 1) / 1.5, (1.5 * (unique(ploidy) - 1)), min(15, (3 * (unique(ploidy) - 1))), Inf), labels = c('Deep Deletion', 'Deletion', 'Neutral', 'Amplification', 'Deep Amplification')))),
-                    base::list(base::as.character(base::cut(base::unlist(copyNumbers.Exons), c(-Inf, base::max(c(0.75, (unique(ploidy)) / 3)), (unique(ploidy)) / 1.5, (1.5 * (unique(ploidy))), min(15, (3 * (unique(ploidy)))), Inf), labels = c('Deep Deletion', 'Deletion', 'Neutral', 'Amplification', 'Deep Amplification'))))
+                    base::list(base::as.character(base::cut(base::unlist(copyNumbers.Exons), c(-Inf, base::max(c(ifelse((unique(ploidy) - 1) / 2 <= 0.75, ((unique(ploidy) - 1) / 2) / 2, 0.75), (unique(ploidy) - 1) / 3)), (unique(ploidy) - 1) / 1.5, (1.5 * (unique(ploidy) - 1)), min(15, (3 * (unique(ploidy) - 1))), Inf), labels = c('Deep Deletion', 'Deletion', 'Neutral', 'Amplification', 'Deep Amplification')))),
+                    base::list(base::as.character(base::cut(base::unlist(copyNumbers.Exons), c(-Inf, base::max(c(ifelse((unique(ploidy)) / 2 <= 0.75, ((unique(ploidy)) / 2) / 2, 0.75), (unique(ploidy)) / 3)), (unique(ploidy)) / 1.5, (1.5 * (unique(ploidy))), min(15, (3 * (unique(ploidy)))), Inf), labels = c('Deep Deletion', 'Deletion', 'Neutral', 'Amplification', 'Deep Amplification'))))
                 ),
 
                 # Determine number of amplified/deleted exons.
