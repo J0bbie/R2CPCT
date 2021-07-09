@@ -15,7 +15,7 @@
 #' }
 #' @return (list) Returns a list of relevant mutational signature output.
 #' @export
-fitMutSigs <- function(dataMuts, restrictiveFit){
+fitMutSigs <- function(dataMuts, restrictiveFit = F){
 
   # Input validation --------------------------------------------------------
 

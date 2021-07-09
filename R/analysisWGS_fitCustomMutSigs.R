@@ -4,6 +4,7 @@
 #'
 #' @param dataMuts (VRanges): VRanges containing the mutations which will used as input.
 #' @param motifMatrix (tibble): Mutational motif matrix,  with a column termed 'Motif' and then x columns designating the signatures.
+#' @param sigType (character): What type of signature should be looked for (motif matrix should match).
 #'
 #' @examples
 #' \dontrun{
@@ -14,20 +15,23 @@
 #' }
 #' @return (list) Returns a list of relevant mutational signature output.
 #' @export
-fitCustomMutSigs <- function(dataMuts, motifMatrix){
+fitCustomMutSigs <- function(dataMuts, motifMatrix, sigType = 'SBS'){
 
     # Input validation --------------------------------------------------------
 
     checkmate::assertClass(dataMuts, classes = 'VRanges')
     checkmate::assertClass(motifMatrix, classes = 'tbl_df')
+    checkmate::assertCharacter(sigType, pattern = 'SBS|DBS|ID', len = 1)
     checkmate::assertTRUE('Motif' %in% colnames(motifMatrix))
 
-    sprintf('Performing (custom) mutational signature fitting on %s unique samples.\nThis can take some minutes.', dplyr::n_distinct(dataMuts$sample)) %>% ParallelLogger::logInfo()
+    sprintf('Performing (custom) mutational signature fitting (%s) on %s unique samples.\nThis can take some minutes.', sigType, dplyr::n_distinct(dataMuts$sample)) %>% ParallelLogger::logInfo()
 
 
     # Transforming motif matrix -----------------------------------------------
 
+    motifMatrix <- motifMatrix %>% dplyr::mutate(Motif = gsub('>', '_', Motif))
     motifMatrix.m <- as.matrix(motifMatrix[colnames(motifMatrix) != 'Motif'])
+
 
 
     # Convert mutations to input matrices -------------------------------------
@@ -35,13 +39,18 @@ fitCustomMutSigs <- function(dataMuts, motifMatrix){
     sprintf('\tConverting input mutations into GRangesLists.') %>% ParallelLogger::logInfo()
 
     # Convert mutations to correct GRanges for input into MutationalPatterns.
-    convertMuts <- function(x){
+    convertMuts <- function(x, DBS = F){
 
         S4Vectors::mcols(x) <- S4Vectors::DataFrame(sample = x$sample)
 
         # Add REF and ALT as column.
-        x$REF <- VariantAnnotation::ref(x)
-        x$ALT <- VariantAnnotation::alt(x)
+        if(DBS){
+            x$REF <- Biostrings::DNAStringSet(VariantAnnotation::ref(x))
+            x$ALT <- Biostrings::DNAStringSetList(base::lapply(VariantAnnotation::alt(x), Biostrings::DNAStringSet))
+        }else{
+            x$REF <- VariantAnnotation::ref(x)
+            x$ALT <- VariantAnnotation::alt(x)
+        }
 
         # Convert to GRangeslist, split per sample.
         x <- GenomicRanges::GRanges(x)
@@ -52,30 +61,39 @@ fitCustomMutSigs <- function(dataMuts, motifMatrix){
     }
 
     # Generate a GRangesList, split per sample, per mutational type.
-    inputMuts <- list()
-    inputMuts$SNV <- convertMuts(dataMuts[dataMuts$mutType == 'SNV'])
+    if(sigType == 'SBS') inputMuts <- convertMuts(dataMuts[dataMuts$mutType == 'SNV'])
+    if(sigType == 'DBS') inputMuts <- convertMuts(dataMuts[dataMuts$mutType == 'MNV' & base::nchar(VariantAnnotation::ref(dataMuts)) == 2 & base::nchar(VariantAnnotation::alt(dataMuts)) == 2], DBS = T)
+    if(sigType == 'ID') inputMuts <- convertMuts(dataMuts[dataMuts$mutType == 'InDel'])
 
 
     # Retrieve mutational motifs ----------------------------------------------
 
     sprintf('\tConverting GRangesLists into mutational matrices.') %>% ParallelLogger::logInfo()
 
-    data.mutMatrix <- list()
+    if(sigType == 'SBS'){
+        data.mutMatrix <- MutationalPatterns::mut_matrix(inputMuts, ref_genome =  'BSgenome.Hsapiens.UCSC.hg19')
+    }
 
-    # SNV (i.e. SBS)
-    data.mutMatrix$SNV <- MutationalPatterns::mut_matrix(inputMuts$SNV, ref_genome =  'BSgenome.Hsapiens.UCSC.hg19')
+    if(sigType == 'DBS'){
+        data.mutMatrix <- MutationalPatterns::get_dbs_context(inputMuts)
+        data.mutMatrix <- MutationalPatterns::count_dbs_contexts(data.mutMatrix)
+    }
+
+    if(sigType == 'ID'){
+        data.mutMatrix <- MutationalPatterns::get_indel_context(inputMuts, ref_genome =  'BSgenome.Hsapiens.UCSC.hg19')
+        data.mutMatrix <- MutationalPatterns::count_indel_contexts(data.mutMatrix)
+    }
+
 
     # Sort on input motifs.
-    data.mutMatrix$SNV <- data.mutMatrix$SNV[base::match(rownames(data.mutMatrix$SNV), motifMatrix$Motif),]
+    data.mutMatrix <- data.mutMatrix[base::match(rownames(data.mutMatrix), motifMatrix$Motif),]
 
 
     # Perform mutational signature fitting ------------------------------------
 
     sprintf('\tPerforming mutational signature fitting for %s signatures.', base::ncol(motifMatrix.m)) %>% ParallelLogger::logInfo()
 
-    data.FittedMuts <- list()
-
-    data.FittedMuts$SNV <- MutationalPatterns::fit_to_signatures(data.mutMatrix$SNV, motifMatrix.m)
+    data.FittedMuts <- MutationalPatterns::fit_to_signatures(data.mutMatrix, motifMatrix.m)
 
 
     # Clean-up and add proposed aetologies ------------------------------------
@@ -93,10 +111,10 @@ fitCustomMutSigs <- function(dataMuts, motifMatrix){
 
     }
 
-    data.FittedMuts$SNV$relativeContribution <- cleanSigs(data.FittedMuts$SNV$contribution)
+    data.FittedMuts$relativeContribution <- cleanSigs(data.FittedMuts$contribution)
 
     # Add the mutational matrices.
-    data.FittedMuts$SNV$mutMatrix <- data.mutMatrix$SNV
+    data.FittedMuts$mutMatrix <- data.mutMatrix
 
 
     # Return statement --------------------------------------------------------

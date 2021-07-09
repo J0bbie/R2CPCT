@@ -4,12 +4,14 @@
 \alias{fitCustomMutSigs}
 \title{Performs mutational signature fitting against a pre-defined list of (custom) motif matrixes.}
 \usage{
-fitCustomMutSigs(dataMuts, motifMatrix)
+fitCustomMutSigs(dataMuts, motifMatrix, sigType = "SBS")
 }
 \arguments{
 \item{dataMuts}{(VRanges): VRanges containing the mutations which will used as input.}
 
 \item{motifMatrix}{(tibble): Mutational motif matrix,  with a column termed 'Motif' and then x columns designating the signatures.}
+
+\item{sigType}{(character): What type of signature should be looked for (motif matrix should match).}
 }
 \value{
 (list) Returns a list of relevant mutational signature output.

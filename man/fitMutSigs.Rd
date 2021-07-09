@@ -4,7 +4,7 @@
 \alias{fitMutSigs}
 \title{Performs optimal fitting of the contribution of mutational signatures.}
 \usage{
-fitMutSigs(dataMuts, restrictiveFit)
+fitMutSigs(dataMuts, restrictiveFit = F)
 }
 \arguments{
 \item{dataMuts}{(VRanges): VRanges containing the mutations which will used as input.}
