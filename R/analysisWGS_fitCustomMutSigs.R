@@ -29,9 +29,7 @@ fitCustomMutSigs <- function(dataMuts, motifMatrix, sigType = 'SBS'){
 
     # Transforming motif matrix -----------------------------------------------
 
-    motifMatrix <- motifMatrix %>% dplyr::mutate(Motif = gsub('>', '_', Motif))
     motifMatrix.m <- as.matrix(motifMatrix[colnames(motifMatrix) != 'Motif'])
-
 
 
     # Convert mutations to input matrices -------------------------------------
@@ -83,7 +81,6 @@ fitCustomMutSigs <- function(dataMuts, motifMatrix, sigType = 'SBS'){
         data.mutMatrix <- MutationalPatterns::get_indel_context(inputMuts, ref_genome =  'BSgenome.Hsapiens.UCSC.hg19')
         data.mutMatrix <- MutationalPatterns::count_indel_contexts(data.mutMatrix)
     }
-
 
     # Sort on input motifs.
     data.mutMatrix <- data.mutMatrix[base::match(rownames(data.mutMatrix), motifMatrix$Motif),]
