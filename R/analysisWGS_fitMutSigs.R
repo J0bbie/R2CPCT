@@ -132,7 +132,7 @@ fitMutSigs <- function(dataMuts, restrictiveFit = F){
       # Melt.
       tidyr::pivot_longer(cols = !dplyr::contains('Signature'), names_to = 'sampleId', values_to = 'relContribution') %>%
       # Add proposed aetiology.
-      dplyr::inner_join(R2CPCT::proposedAetiologyCOSMICv3.1, by = 'Signature')
+      dplyr::left_join(R2CPCT::proposedAetiologyCOSMICv3.1, by = 'Signature')
 
     return(relContribution)
 
