@@ -87,7 +87,7 @@ runArriba <- function(data.SV, minTAF = 0.05, bamFolder, outputFolder){
     bamFiles <- bamFiles %>% dplyr::filter(sample %in% names(arriba.SV))
 
     # Generate the Bash commands and write to tmp. file.
-    z <- sprintf('/mnt/data/ccbc_environment/software/general/arriba_v2.1.0/arriba -x %s -g /mnt/data/ccbc_environment/general/annotation/hg19/GENCODE/noChrPrefix_VEP_gencode.v35lift37.annotation.gtf -a /mnt/data/ccbc_environment/general/genomes/hsapiens/hg19_HMF/Homo_sapiens.GRCh37.GATK.illumina.fasta -b /mnt/data/ccbc_environment/software/general/arriba_v2.1.0/database/blacklist_hg19_hs37d5_GRCh37_v2.1.0.tsv.gz -k /mnt/data/ccbc_environment/general/annotation/ChimerDB_4.0/knownRecurrentFusions.txt -o %s -d %s -s reverse', bamFiles$BAM, paste0(outputFolder, '/', bamFiles$sample, '_Arriba_fusions.tsv'), paste0(tempdir(), '/', bamFiles$sample,'_SV.txt'))
+    z <- sprintf('/mnt/onco0002/repository/software/arriba_v2.1.0/arriba -x %s -g /mnt/onco0002/repository/general/annotation/hg19/GENCODE/noChrPrefix_VEP_gencode.v35lift37.annotation.gtf -a /mnt/onco0002/repository/general/genomes/hsapiens/hg19_HMF/Homo_sapiens.GRCh37.GATK.illumina.fasta -b /mnt/onco0002/repository/software/arriba_v2.1.0/database/blacklist_hg19_hs37d5_GRCh37_v2.1.0.tsv.gz -k /mnt/onco0002/repository/general/annotation/ChimerDB_4.0/knownRecurrentFusions.txt -o %s -d %s -s reverse', bamFiles$BAM, paste0(outputFolder, '/', bamFiles$sample, '_Arriba_fusions.tsv'), paste0(tempdir(), '/', bamFiles$sample,'_SV.txt'))
     outputFile <- tempfile()
     write.table(z, outputFile, row.names = F, quote = F, sep = '\t', col.names = F)
 

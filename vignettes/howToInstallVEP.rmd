@@ -1,9 +1,9 @@
 ---
-title: 'Installation of VEP (Oct. 2020)'
+title: 'Installation of VEP (Sep. 2021)'
 date: '`r Sys.Date()`'
 author: 'Job van Riet'
 vignette: >
-  %\VignetteIndexEntry{Installation of VEP (Oct. 2020)}
+  %\VignetteIndexEntry{Installation of VEP (Sep. 2021)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 output:
@@ -31,7 +31,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction.
 
-This document details the installation of VEP (as of Feb. 2020) for GRCh37.
+This document details the installation of VEP (as of Sep. 2021) for GRCh37.
 
 # Installation guide
 
@@ -46,7 +46,7 @@ mkdir cache
 mkdir Plugins
 
 # Run installer.
-perl INSTALL.pl --AUTO alcf --PLUGINS CADD,FATHMM_MKL --CACHEDIR cache/ --PLUGINSDIR Plugins/ --CONVERT --SPECIES homo_sapiens_vep_101_GRCh37
+perl INSTALL.pl --NO_HTSLIB --AUTO alcf --PLUGINS CADD,FATHMM_MKL --CACHEDIR cache/ --PLUGINSDIR Plugins/ --CONVERT --SPECIES homo_sapiens_vep_104_GRCh37
 
 # Selected 439 as species (homo_sapiens_vep_101_GRCh37.tar.gz)
 # Fasta file: Homo_sapiens.GRCh37.75.dna.primary_assembly.fa.gz

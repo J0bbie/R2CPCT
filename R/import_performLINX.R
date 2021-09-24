@@ -7,6 +7,7 @@
 #' @param cpctIds (character): The samples which will be retrieved.
 #' @param nThreads (integer): Number of cores to run multiple LINX in parallel.
 #' @param dryRun (logical): Only output the tmp. file which stores the commands (TRUE) or run the commands (FALSE).
+#' @param pathLINX (character): Path to the folder containing LINX and the respective databases.
 #'
 #' @examples
 #' \dontrun{
@@ -16,7 +17,7 @@
 #' }
 #' @return (NULL) Does not return anything, only outputs logging messages.
 #' @export
-performLINX <- function(pathCombined, cpctIds, nThreads, dryRun = T){
+performLINX <- function(pathCombined, cpctIds, nThreads, dryRun = T, pathLINX = '/mnt/onco0002/repository/software/LINX_v1.16/'){
 
     # Input validation --------------------------------------------------------
 
@@ -38,14 +39,14 @@ performLINX <- function(pathCombined, cpctIds, nThreads, dryRun = T){
         # Retrieve path to PURPLE/GRIDSS SV file.
         svFile <- base::list.files(pathCombined, full.names = T, pattern = paste0(cpctId, '\\.purple.sv.*vcf.gz$'))
 
-        sprintf('java -jar /mnt/data/ccbc_environment/software/general/LINX_1.15/sv-linx_v1.15.jar
+        sprintf('java -jar %s/linx_v1.16.jar
         -sample %s -sv_vcf %s -purple_dir %s -output_dir %s -check_fusions -check_drivers
-        -known_fusion_file /mnt/data/ccbc_environment/software/general/LINX_1.15/known_fusion_data.csv
-        -gene_transcripts_dir /mnt/data/ccbc_environment/software/general/LINX_1.15/ENSEMBLv101/
-        -fragile_site_file /mnt/data/ccbc_environment/software/general/LINX_1.15/fragile_sites_hmf.hg19.csv
-        -line_element_file /mnt/data/ccbc_environment/software/general/LINX_1.15/line_elements.hg19.csv
-        -viral_hosts_file /mnt/data/ccbc_environment/software/general/LINX_1.15/viral_host_ref.csv',
-                cpctId, svFile, pathCombined, pathCombined) %>% gsub('\n', '', .)
+        -known_fusion_file %s/known_fusion_data.37.csv
+        -gene_transcripts_dir %s/ENSEMBLv101/
+        -fragile_site_file %s/fragile_sites_hmf.37.csv
+        -line_element_file %s/line_elements.37.csv
+        -viral_hosts_file %s/viral_host_ref.csv',
+                pathLINX, cpctId, svFile, pathCombined, pathCombined, pathLINX, pathLINX, pathLINX, pathLINX, pathLINX) %>% gsub('\n', '', .)
     }))
 
 

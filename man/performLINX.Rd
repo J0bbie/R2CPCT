@@ -4,7 +4,13 @@
 \alias{performLINX}
 \title{Run LINX on one or multiple samples to discover fusion and driver-events from PURPLE output.}
 \usage{
-performLINX(pathCombined, cpctIds, nThreads, dryRun = T)
+performLINX(
+  pathCombined,
+  cpctIds,
+  nThreads,
+  dryRun = T,
+  pathLINX = "/mnt/onco0002/repository/software/LINX_v1.16/"
+)
 }
 \arguments{
 \item{pathCombined}{(character): Path to the combinedData/ folder containing the symlinks to the WGS files of the data-request (DR).}
@@ -14,6 +20,8 @@ performLINX(pathCombined, cpctIds, nThreads, dryRun = T)
 \item{nThreads}{(integer): Number of cores to run multiple LINX in parallel.}
 
 \item{dryRun}{(logical): Only output the tmp. file which stores the commands (TRUE) or run the commands (FALSE).}
+
+\item{pathLINX}{(character): Path to the folder containing LINX and the respective databases.}
 }
 \value{
 (NULL) Does not return anything, only outputs logging messages.

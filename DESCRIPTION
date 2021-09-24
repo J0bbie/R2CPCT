@@ -60,7 +60,7 @@ Remotes:
     bioc::3.12/GenomicAlignments,
     bioc::3.12/graph,
     bioc::3.12/StructuralVariantAnnotation
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests:
     knitr,
     rmarkdown,
