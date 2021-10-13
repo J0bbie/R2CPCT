@@ -7,11 +7,11 @@
 performGISTIC2(
   regions,
   outputFolder,
-  gisticPath = "/mnt/data/ccbc_environment/software/general/GISTIC2_2.0.23/gistic2",
+  gisticPath = "/mnt/onco0002/repository/software/GISTIC2/gistic2",
  
     gisticParameters = "-genegistic 1 -gcm extreme -maxseg 4000 -broad 1 -brlen 0.98 -conf 0.95 -rx 0 -cap 3 -saveseg 0 -armpeel 1 -smallmem 0 -res 0.01 -ta 0.3 -td 0.3 -savedata 0 -savegene 1 -qvt 0.1 -twoside 0",
  
-    gisticAnno = "/mnt/data/ccbc_environment/software/general/GISTIC2_2.0.23/refgenefiles/hg19.UCSC.add_miR.140312.refgene.mat"
+    gisticAnno = "/mnt/onco0002/repository/software/GISTIC2/refgenefiles/hg19.UCSC.add_miR.140312.refgene.mat"
 )
 }
 \arguments{

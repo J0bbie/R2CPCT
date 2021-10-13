@@ -15,3 +15,7 @@ devtools::install_github(repo = "J0bbie/R2CPCT")
 # Load library
 library(R2CPCT)
 ```
+
+### Additional annotation of genomic variants with VEP.
+
+Prior to import, files need to be annotated with VEP using the workflow and scripts available in https://github.com/J0bbie/VariantAnnotation_VEP.

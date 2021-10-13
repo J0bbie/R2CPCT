@@ -28,6 +28,7 @@ importSomaticVariantsVEP(
 }
 \description{
 Imports the VCF obtained from HMF and further annotated by VEP.
+The annotation should have been performed using the workflow available at: https://github.com/J0bbie/VariantAnnotation_VEP
 }
 \examples{
 \dontrun{

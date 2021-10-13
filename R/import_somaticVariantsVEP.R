@@ -1,6 +1,7 @@
 #' @title Import VEP-annotated VCF files obtained from HMF (Strelka2/Sage).
 #'
 #' @description Imports the VCF obtained from HMF and further annotated by VEP.
+#' The annotation should have been performed using the workflow available at: https://github.com/J0bbie/VariantAnnotation_VEP
 #'
 #' @param pathVCF (character): Path to the <CPCT>_post_processed.vcf file containing Strelka2 somatic variants.
 #' @param passOnly (logical): Only import variant which passed all Strelka2 and PON filters. This also filters variants based on PON filter (>5 PON occurences).
@@ -45,7 +46,7 @@ importSomaticVariantsVEP <- function(pathVCF, passOnly = T, gnomADe = 0.001, gno
 
     # Only retain a single record of each variant (of the tumor)
     if(base::length(base::unique(VariantAnnotation::sampleNames(sample.VCF))) > 1){
-        sample.VCF <- sample.VCF[base::grepl('R$', VariantAnnotation::sampleNames(sample.VCF)),]
+        sample.VCF <- sample.VCF[!base::grepl('R$', VariantAnnotation::sampleNames(sample.VCF)),]
     }
 
     # Remove non-PASS variants. (PON and variant-caller filtering)
@@ -62,35 +63,34 @@ importSomaticVariantsVEP <- function(pathVCF, passOnly = T, gnomADe = 0.001, gno
     sprintf('\tConverting and cleaning annotations') %>% ParallelLogger::logTrace()
 
     # Convert annotation to tibble.
-    colAnno <- c('Allele', 'Consequence', 'IMPACT', 'SYMBOL', 'Gene', 'Feature_type', 'Feature', 'BIOTYPE', 'EXON', 'INTRON', 'HGVSc', 'HGVSp', 'cDNA_position', 'CDS_position', 'Protein_position', 'Amino_acids', 'Codons', 'Existing_variation', 'DISTANCE', 'STRAND', 'FLAGS', 'VARIANT_CLASS', 'SYMBOL_SOURCE', 'HGNC_ID', 'CANONICAL', 'TSL', 'APPRIS', 'CCDS', 'ENSP', 'SWISSPROT', 'TREMBL', 'UNIPARC', 'SOURCE', 'GENE_PHENO', 'DOMAINS', 'HGVS_OFFSET', 'CLIN_SIG', 'SOMATIC', 'PHENO', 'PUBMED', 'CADD_PHRED', 'CADD_RAW', 'FATHMM_MKL_C', 'FATHMM_MKL_NC', 'gnomADe', 'gnomADe_AF', 'gnomADg', 'gnomADg_AF', 'ClinVar', 'ClinVar_CLNDN', 'ClinVar_CLNHGVS', 'ClinVar_CLNSIG', 'noChrPrefix_VEP_gencode.v35lift37.annotation.gtf.gz')
-    sample.VCF$ANN <- readr::read_delim(S4Vectors::unstrsplit(sample.VCF$ANN), delim = '|', col_names = colAnno, col_types = paste0(rep('c',length(colAnno)), collapse = ''))
-
-    varInfo <- tibble::as_tibble(S4Vectors::mcols(sample.VCF))
-
+    varInfo <- tibble::as_tibble(S4Vectors::mcols(sample.VCF)) %>% 
+        tidyr::separate(ANN, into = c('Allele','Consequence','IMPACT','SYMBOL','Gene','Feature_type','Feature','BIOTYPE','EXON','INTRON','HGVSc','HGVSp','cDNA_position','CDS_position','Protein_position','Amino_acids','Codons','Existing_variation','DISTANCE','STRAND','FLAGS','VARIANT_CLASS','SYMBOL_SOURCE','HGNC_ID','CANONICAL','TSL','APPRIS','CCDS','ENSP','SWISSPROT','TREMBL','UNIPARC','UNIPROT_ISOFORM','SOURCE','GENE_PHENO','DOMAINS','HGVS_OFFSET','CLIN_SIG','SOMATIC','PHENO','PUBMED','HGVSp2','gnomADe','gnomADe_AF','gnomADg','gnomADg_AF','ClinVar','ClinVar_CLNDN','ClinVar_CLNHGVS','ClinVar_CLNSIG'), sep = '\\|') %>% 
+        dplyr::mutate(
+            gnomADg_AF = as.numeric(gnomADg_AF),
+            gnomADe_AF = as.numeric(gnomADe_AF),
+            HGVSp2 = NULL
+        )
+    
     # Remove unused / old annotations (or also present within the ANN fields).
     varInfo$LOF <- NULL
     varInfo$NMD <- NULL
     varInfo$SEC <- NULL
     varInfo$SEW <- NULL
     varInfo$KT <- NULL
-    varInfo$ANN.DOMAINS <- NULL
-    varInfo$ANN.SOURCE <- NULL
+    varInfo$DOMAINS <- NULL
+    varInfo$SOURCE <- NULL
 
-    varInfo <- varInfo[!grepl('^RC_|^gnomADe|^gnomADg|^RABQ|^RAD|^ClinVar|noChrPrefix_VEP', colnames(varInfo))]
+    varInfo <- varInfo[!grepl('^RC_|^RABQ|^RAD|^ClinVar', colnames(varInfo))]
 
     # Add common gene identifier.
-    commonSYMBOL <- limma::alias2SymbolTable(varInfo$ANN.SYMBOL)
-    varInfo$ANN.SYMBOL <- base::ifelse(is.na(commonSYMBOL), varInfo$ANN.SYMBOL, commonSYMBOL)
+    commonSYMBOL <- limma::alias2SymbolTable(varInfo$SYMBOL)
+    varInfo$SYMBOL <- base::ifelse(is.na(commonSYMBOL), varInfo$SYMBOL, commonSYMBOL)
 
     # Convert all columns.
     varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = tidyselect::everything(), .fns = utils::type.convert, as.is = T))
 
     # Convert columns with >50 levels into characters.
     varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = base::colnames(varInfo[base::sapply(varInfo, function(x) base::length(base::levels(x))) >= 50]), .fns = base::as.character))
-
-    # Sanity check - Set gnomAD AF to numeric.
-    varInfo$ANN.gnomADg_AF <- base::suppressWarnings(base::as.numeric(varInfo$ANN.gnomADg_AF))
-    varInfo$ANN.gnomADe_AF <- base::suppressWarnings(base::as.numeric(varInfo$ANN.gnomADe_AF))
 
     # Return annotation to the VRanges.
     S4Vectors::mcols(sample.VCF) <- varInfo
@@ -106,8 +106,8 @@ importSomaticVariantsVEP <- function(pathVCF, passOnly = T, gnomADe = 0.001, gno
 
     # Filter on gnoMAD thresholds.
     totalPriorPass <- base::length(sample.VCF)
-    sample.VCF <- sample.VCF[(sample.VCF$ANN.gnomADe_AF <= gnomADe | is.na(sample.VCF$ANN.gnomADe_AF))]
-    sample.VCF <- sample.VCF[(sample.VCF$ANN.gnomADg_AF <= gnomADg | is.na(sample.VCF$ANN.gnomADg_AF))]
+    sample.VCF <- sample.VCF[(sample.VCF$gnomADe_AF <= gnomADe | is.na(sample.VCF$gnomADe_AF))]
+    sample.VCF <- sample.VCF[(sample.VCF$gnomADg_AF <= gnomADg | is.na(sample.VCF$gnomADg_AF))]
     sprintf('\tRetaining %s / %s somatic variants after gnomAD exome and genome filtering.', base::length(sample.VCF), totalPriorPass) %>% ParallelLogger::logInfo()
 
     # Clean dropped levels.

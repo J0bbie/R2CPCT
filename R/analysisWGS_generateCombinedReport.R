@@ -162,31 +162,31 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     combinedReport.Muts <- somaticData$somaticVariants %>%
 
         # Only retain the protein-coding somatic mutations.
-        dplyr::filter(!is.na(ANN.HGVSp) | grepl('splice', ANN.Consequence), base::grepl('protein_coding', ANN.BIOTYPE), ANN.Consequence != 'synonymous_variant') %>%
-        dplyr::mutate(ANN.Existing_variation = as.character(ANN.Existing_variation)) %>%
+        dplyr::filter(!is.na(HGVSp) | grepl('splice', Consequence), base::grepl('protein_coding', BIOTYPE), Consequence != 'synonymous_variant') %>%
+        dplyr::mutate(Existing_variation = as.character(Existing_variation)) %>%
 
         # Per sample, summarize the gene-level information.
-        dplyr::group_by(ANN.Gene, ANN.SYMBOL, sample) %>%
+        dplyr::group_by(Gene, SYMBOL, sample) %>%
         dplyr::summarise(
             # Total number of non-synonymous mutations.
             totalNonSynMutsInGeneInSample = n(),
 
             # Clean-up mutational status.
-            Consequence.Mut = base::ifelse(totalNonSynMutsInGeneInSample > 1, 'Multiple coding mutations', Hmisc::capitalize(base::gsub('_', ' ', base::gsub('&.*', '', as.character(ANN.Consequence))))),
-            Consequence.HGVSp = base::paste0(base::unique(base::gsub('%3D', '=', ANN.HGVSp)), collapse = ', '),
+            Consequence.Mut = base::ifelse(totalNonSynMutsInGeneInSample > 1, 'Multiple coding mutations', Hmisc::capitalize(base::gsub('_', ' ', base::gsub('&.*', '', as.character(Consequence))))),
+            Consequence.HGVSp = base::paste0(base::unique(base::gsub('%3D', '=', HGVSp)), collapse = ', '),
 
             # Add additional information.
-            ANN.CLIN_SIG = base::paste0(base::unique(stats::na.omit(ANN.CLIN_SIG)), collapse = ', '),
-            ANN.IMPACT = base::paste0(base::unique(stats::na.omit(ANN.IMPACT)), collapse = ', '),
-            ANN.mutType = base::paste0(base::unique(stats::na.omit(mutType)), collapse = ', '),
-            ANN.BIOTYPE = base::paste0(base::unique(stats::na.omit(ANN.BIOTYPE)), collapse = ', '),
-            ANN.Existing_variation = base::paste0(base::unique(stats::na.omit(ANN.Existing_variation)), collapse = ', '),
+            CLIN_SIG = base::paste0(base::unique(stats::na.omit(CLIN_SIG)), collapse = ', '),
+            IMPACT = base::paste0(base::unique(stats::na.omit(IMPACT)), collapse = ', '),
+            mutType = base::paste0(base::unique(stats::na.omit(mutType)), collapse = ', '),
+            BIOTYPE = base::paste0(base::unique(stats::na.omit(BIOTYPE)), collapse = ', '),
+            Existing_variation = base::paste0(base::unique(stats::na.omit(Existing_variation)), collapse = ', '),
             PURPLE_AF = base::paste0(base::unique(stats::na.omit(PURPLE_AF)), collapse = ', ')
 
         ) %>%
         dplyr::ungroup() %>%
         # Make use of uniform column names.
-        dplyr::mutate(ENSEMBL = ANN.Gene, ANN.Gene = NULL, SYMBOL = ANN.SYMBOL, ANN.SYMBOL = NULL) %>%
+        dplyr::mutate(ENSEMBL = Gene, Gene = NULL, SYMBOL = SYMBOL, SYMBOL = NULL) %>%
         base::droplevels()
 
     # Replace all empty string characters with NA.
