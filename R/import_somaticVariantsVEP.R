@@ -26,109 +26,108 @@
 #' @family CPCT
 #' @export
 importSomaticVariantsVEP <- function(pathVCF, passOnly = T, gnomADe = 0.001, gnomADg = 0.005, keepAnnotation = T){
-
-    # Input validation --------------------------------------------------------
-
-    checkmate::assertAccess(pathVCF, access = 'r')
-    checkmate::assertLogical(passOnly)
-    checkmate::assertDouble(gnomADe)
-    checkmate::assertDouble(gnomADg)
-    checkmate::assertLogical(keepAnnotation)
-
-
-    # Read VCF ----------------------------------------------------------------
-
-    sprintf('Importing VCF: %s', pathVCF) %>% ParallelLogger::logInfo()
-
-    # Clean seqlevels and add chromosome information.
-    sample.VCF <- VariantAnnotation::readVcfAsVRanges(x = pathVCF, genome = 'hg19', use.names = T) %>%
-        R2CPCT::cleanSeqlevels(excludeChr = NULL)
-
-    # Only retain a single record of each variant (of the tumor)
-    if(base::length(base::unique(VariantAnnotation::sampleNames(sample.VCF))) > 1){
-        sample.VCF <- sample.VCF[!base::grepl('R$', VariantAnnotation::sampleNames(sample.VCF)),]
-    }
-
-    # Remove non-PASS variants. (PON and variant-caller filtering)
-    if(passOnly){
-        totalPriorPass <- base::length(sample.VCF)
-        sample.VCF <- sample.VCF[matrixStats::rowAlls(VariantAnnotation::softFilterMatrix(sample.VCF))]
-        sprintf('\tRetaining %s / %s PASS-only somatic variants.', base::length(sample.VCF), totalPriorPass) %>% ParallelLogger::logInfo()
-    }
-
-
-    # Convert / clean annotations ---------------------------------------------
-
-    if(is.null(sample.VCF$ANN)) stop(sprintf('This file does not contain ANN (annotation) column:\t%s', pathVCF))
-    sprintf('\tConverting and cleaning annotations') %>% ParallelLogger::logTrace()
-
-    # Convert annotation to tibble.
-    varInfo <- tibble::as_tibble(S4Vectors::mcols(sample.VCF)) %>% 
-        tidyr::separate(ANN, into = c('Allele','Consequence','IMPACT','SYMBOL','Gene','Feature_type','Feature','BIOTYPE','EXON','INTRON','HGVSc','HGVSp','cDNA_position','CDS_position','Protein_position','Amino_acids','Codons','Existing_variation','DISTANCE','STRAND','FLAGS','VARIANT_CLASS','SYMBOL_SOURCE','HGNC_ID','CANONICAL','TSL','APPRIS','CCDS','ENSP','SWISSPROT','TREMBL','UNIPARC','UNIPROT_ISOFORM','SOURCE','GENE_PHENO','DOMAINS','HGVS_OFFSET','CLIN_SIG','SOMATIC','PHENO','PUBMED','HGVSp2','gnomADe','gnomADe_AF','gnomADg','gnomADg_AF','ClinVar','ClinVar_CLNDN','ClinVar_CLNHGVS','ClinVar_CLNSIG'), sep = '\\|') %>% 
-        dplyr::mutate(
-            gnomADg_AF = as.numeric(gnomADg_AF),
-            gnomADe_AF = as.numeric(gnomADe_AF),
-            HGVSp2 = NULL
-        )
-    
-    # Remove unused / old annotations (or also present within the ANN fields).
-    varInfo$LOF <- NULL
-    varInfo$NMD <- NULL
-    varInfo$SEC <- NULL
-    varInfo$SEW <- NULL
-    varInfo$KT <- NULL
-    varInfo$DOMAINS <- NULL
-    varInfo$SOURCE <- NULL
-
-    varInfo <- varInfo[!grepl('^RC_|^RABQ|^RAD|^ClinVar', colnames(varInfo))]
-
-    # Add common gene identifier.
-    commonSYMBOL <- limma::alias2SymbolTable(varInfo$SYMBOL)
-    varInfo$SYMBOL <- base::ifelse(is.na(commonSYMBOL), varInfo$SYMBOL, commonSYMBOL)
-
-    # Convert all columns.
-    varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = tidyselect::everything(), .fns = utils::type.convert, as.is = T))
-
-    # Convert columns with >50 levels into characters.
-    varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = base::colnames(varInfo[base::sapply(varInfo, function(x) base::length(base::levels(x))) >= 50]), .fns = base::as.character))
-
-    # Return annotation to the VRanges.
-    S4Vectors::mcols(sample.VCF) <- varInfo
-
-    # Remove annotation if not needed (reduced size)
-    if(!keepAnnotation) S4Vectors::mcols(sample.VCF) <- NULL
-
-    # Add sample name
-    sample.VCF$sample <- base::factor(base::gsub('\\.purple.*', '', base::basename(pathVCF)))
-
-
-    # gnomAD filtering --------------------------------------------------------
-
-    # Filter on gnoMAD thresholds.
+  
+  # Input validation --------------------------------------------------------
+  
+  checkmate::assertAccess(pathVCF, access = 'r')
+  checkmate::assertLogical(passOnly)
+  checkmate::assertDouble(gnomADe)
+  checkmate::assertDouble(gnomADg)
+  checkmate::assertLogical(keepAnnotation)
+  
+  
+  # Read VCF ----------------------------------------------------------------
+  
+  sprintf('Importing VCF: %s', pathVCF) %>% ParallelLogger::logInfo()
+  
+  # Clean seqlevels and add chromosome information.
+  sample.VCF <- VariantAnnotation::readVcfAsVRanges(x = pathVCF, genome = 'hg19', use.names = T) %>%
+    R2CPCT::cleanSeqlevels(excludeChr = NULL)
+  
+  # Only retain a single record of each variant (of the tumor)
+  if(base::length(base::unique(VariantAnnotation::sampleNames(sample.VCF))) > 1){
+    sample.VCF <- sample.VCF[!base::grepl('R$', VariantAnnotation::sampleNames(sample.VCF)),]
+  }
+  
+  # Remove non-PASS variants. (PON and variant-caller filtering)
+  if(passOnly){
     totalPriorPass <- base::length(sample.VCF)
-    sample.VCF <- sample.VCF[(sample.VCF$gnomADe_AF <= gnomADe | is.na(sample.VCF$gnomADe_AF))]
-    sample.VCF <- sample.VCF[(sample.VCF$gnomADg_AF <= gnomADg | is.na(sample.VCF$gnomADg_AF))]
-    sprintf('\tRetaining %s / %s somatic variants after gnomAD exome and genome filtering.', base::length(sample.VCF), totalPriorPass) %>% ParallelLogger::logInfo()
-
-    # Clean dropped levels.
-    S4Vectors::mcols(sample.VCF) <- base::droplevels(S4Vectors::mcols(sample.VCF))
-
-
-    # Determine mutational type -----------------------------------------------
-
-    sample.VCF$mutType <- 'Other'
-    sample.VCF$mutType <- ifelse(VariantAnnotation::isSNV(sample.VCF), 'SNV', sample.VCF$mutType)
-    sample.VCF$mutType <- ifelse(VariantAnnotation::isIndel(sample.VCF), 'InDel', sample.VCF$mutType)
-    sample.VCF$mutType <- ifelse(!VariantAnnotation::isSNV(sample.VCF) & VariantAnnotation::isSubstitution(sample.VCF), 'MNV', sample.VCF$mutType)
-    sample.VCF$mutType <- ifelse(VariantAnnotation::isDelins(sample.VCF), 'DelIn', sample.VCF$mutType)
-
-    sample.VCF$mutType <- base::factor(sample.VCF$mutType)
-
-
-    # Return statement --------------------------------------------------------
-
-    sprintf('\tReturning VRanges') %>% ParallelLogger::logTrace()
-
-    return(sample.VCF)
-
+    sample.VCF <- sample.VCF[matrixStats::rowAlls(VariantAnnotation::softFilterMatrix(sample.VCF))]
+    sprintf('\tRetaining %s / %s PASS-only somatic variants.', base::length(sample.VCF), totalPriorPass) %>% ParallelLogger::logInfo()
+  }
+  
+  
+  # Convert / clean annotations ---------------------------------------------
+  
+  if(is.null(sample.VCF$ANN)) stop(sprintf('This file does not contain ANN (annotation) column:\t%s', pathVCF))
+  sprintf('\tConverting and cleaning annotations') %>% ParallelLogger::logTrace()
+  
+  # Convert annotation to tibble.
+  varInfo <- tibble::as_tibble(S4Vectors::mcols(sample.VCF)) %>% 
+    tidyr::separate(ANN, into = c('Allele','Consequence','IMPACT','SYMBOL','Gene','Feature_type','Feature','BIOTYPE','EXON','INTRON','HGVSc','HGVSp','cDNA_position','CDS_position','Protein_position','Amino_acids','Codons','Existing_variation','DISTANCE','STRAND','FLAGS','VARIANT_CLASS','SYMBOL_SOURCE','HGNC_ID','CANONICAL','TSL','APPRIS','CCDS','ENSP','SWISSPROT','TREMBL','UNIPARC','UNIPROT_ISOFORM','SOURCE','GENE_PHENO','DOMAINS','HGVS_OFFSET','CLIN_SIG','SOMATIC','PHENO','PUBMED','HGVSp2','gnomADe','gnomADe_AF','gnomADg','gnomADg_AF','ClinVar','ClinVar_CLNDN','ClinVar_CLNHGVS','ClinVar_CLNSIG'), sep = '\\|') %>% 
+    dplyr::mutate(
+      gnomADg_AF = as.numeric(gnomADg_AF),
+      gnomADe_AF = as.numeric(gnomADe_AF),
+      HGVSp2 = NULL
+    )
+  
+  # Remove unused / old annotations (or also present within the ANN fields).
+  varInfo$LOF <- NULL
+  varInfo$NMD <- NULL
+  varInfo$SEC <- NULL
+  varInfo$SEW <- NULL
+  varInfo$KT <- NULL
+  varInfo$DOMAINS <- NULL
+  varInfo$SOURCE <- NULL
+  
+  varInfo <- varInfo[!grepl('^RC_|^RABQ|^RAD|^ClinVar', colnames(varInfo))]
+  
+  # Add common gene identifier.
+  commonSYMBOL <- limma::alias2SymbolTable(varInfo$SYMBOL)
+  varInfo$SYMBOL <- base::ifelse(is.na(commonSYMBOL), varInfo$SYMBOL, commonSYMBOL)
+  
+  # Convert all columns.
+  varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = tidyselect::everything(), .fns = utils::type.convert, as.is = T))
+  
+  # Convert columns with >50 levels into characters.
+  varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = base::colnames(varInfo[base::sapply(varInfo, function(x) base::length(base::levels(x))) >= 50]), .fns = base::as.character))
+  
+  # Return annotation to the VRanges.
+  S4Vectors::mcols(sample.VCF) <- varInfo
+  
+  # gnomAD filtering --------------------------------------------------------
+  
+  # Filter on gnoMAD thresholds.
+  totalPriorPass <- base::length(sample.VCF)
+  sample.VCF <- sample.VCF[(sample.VCF$gnomADe_AF <= gnomADe | is.na(sample.VCF$gnomADe_AF))]
+  sample.VCF <- sample.VCF[(sample.VCF$gnomADg_AF <= gnomADg | is.na(sample.VCF$gnomADg_AF))]
+  sprintf('\tRetaining %s / %s somatic variants after gnomAD exome and genome filtering.', base::length(sample.VCF), totalPriorPass) %>% ParallelLogger::logInfo()
+  
+  # Clean dropped levels.
+  S4Vectors::mcols(sample.VCF) <- base::droplevels(S4Vectors::mcols(sample.VCF))
+  
+  
+  # Determine mutational type -----------------------------------------------
+  
+  sample.VCF$mutType <- 'Other'
+  sample.VCF$mutType <- ifelse(VariantAnnotation::isSNV(sample.VCF), 'SNV', sample.VCF$mutType)
+  sample.VCF$mutType <- ifelse(VariantAnnotation::isIndel(sample.VCF), 'InDel', sample.VCF$mutType)
+  sample.VCF$mutType <- ifelse(!VariantAnnotation::isSNV(sample.VCF) & VariantAnnotation::isSubstitution(sample.VCF), 'MNV', sample.VCF$mutType)
+  sample.VCF$mutType <- ifelse(VariantAnnotation::isDelins(sample.VCF), 'DelIn', sample.VCF$mutType)
+  
+  sample.VCF$mutType <- base::factor(sample.VCF$mutType)
+  
+  
+  # Return statement --------------------------------------------------------
+  
+  # Remove annotation if not needed (reduced size)
+  if(!keepAnnotation) S4Vectors::mcols(sample.VCF) <- NULL
+  
+  # Add sample name
+  sample.VCF$sample <- base::factor(base::gsub('\\.purple.*', '', base::basename(pathVCF)))
+  
+  sprintf('\tReturning VRanges') %>% ParallelLogger::logTrace()
+  
+  return(sample.VCF)
+  
 }
