@@ -23,7 +23,7 @@ Performs mutational signature fitting against a pre-defined list of (custom) mot
 Users need to supply a motif matrix (SNV-only), the names of the columns (signatures) will be used a aetiology.
 }
 \examples{
-\dontrun{
+\donttest{
 
  data.Cohort <- R2CPCT::importWGSOfCohort(<cpctIds>, <combinedData>)
  data.MutSigs <- R2CPCT::fitMutSigs(data.Cohort$somaticVariants, motifMatrix)

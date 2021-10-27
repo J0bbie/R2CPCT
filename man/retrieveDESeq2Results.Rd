@@ -20,10 +20,10 @@ retrieveDESeq2Results(DESeq2.Object, contrast, nThreads = 20)
 Retrieve the results from a DESeq2-analysis using IHW and LFC shrinkage.
 }
 \examples{
-\dontrun{
+\donttest{
 
 DESeq2.allSamples <- DESeq2::DESeqDataSetFromMatrix(countData = countMatrix, colData = samples.meta[match(colnames(countMatrix), samples.meta$sample),], design = ~treatmentType)
-DESeq2.allSamples <- DESeq2::DESeq(DESeq2.allSamples, test = 'Wald', parallel = T, BPPARAM = BiocParallel::MulticoreParam(workers = 20))
+DESeq2.allSamples <- DESeq2::DESeq(DESeq2.allSamples, test = 'Wald', parallel = TRUE, BPPARAM = BiocParallel::MulticoreParam(workers = 20))
 retrieveDESeq2Results(DESeq2.allSamples)
 
 }

@@ -18,7 +18,7 @@ initializeLogger(name = NULL, file = NULL)
 Initialize a parallel-ready logger.
 }
 \examples{
-\dontrun{
+\donttest{
 
  initializeLogger()
 

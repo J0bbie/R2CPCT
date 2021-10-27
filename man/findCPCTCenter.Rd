@@ -16,7 +16,7 @@ findCPCTCenter(x)
 Find corresponding center based on CPCT number.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	meta$Center <- findCPCTCenter(CPCTId)
 
@@ -24,7 +24,7 @@ Find corresponding center based on CPCT number.
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},
 \code{\link{importSomaticCopynumberPURPLE}()},

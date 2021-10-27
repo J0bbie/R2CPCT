@@ -16,7 +16,7 @@ importGISTIC2(gisticFolder)
 Imports and cleans-up the output from \link[R2CPCT]{performGISTIC2}.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	Folder to the GISTIC2 output.
 	importGISTIC2('/tmp/etc/etc/')

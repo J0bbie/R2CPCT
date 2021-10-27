@@ -22,7 +22,7 @@ runArriba(data.SV, minTAF = 0.05, bamFolder, outputFolder)
 Run Arriba on RNA-Seq samples using structural-variants information derived from WGS.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	runArriba(
 	  data.SV = DR71.CohortWGS$structuralVariants,

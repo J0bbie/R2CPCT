@@ -9,9 +9,9 @@ plotMutationalSignaturesCOSMIC(
   orderSamples = NULL,
   minContrib = 5,
   minMutants = NULL,
-  combineSigs = T,
+  combineSigs = TRUE,
   focusOnSig = NULL,
-  onlyShowFocus = F
+  onlyShowFocus = FALSE
 )
 }
 \arguments{

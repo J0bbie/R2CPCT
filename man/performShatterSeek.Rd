@@ -18,7 +18,7 @@ performShatterSeek(copyNumbers, structuralVariants)
 Performs ShatterSeek analysis.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	runCHORD(dataSample$somaticVariants, dataSample$structuralVariants)
 
@@ -26,7 +26,7 @@ Performs ShatterSeek analysis.
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},

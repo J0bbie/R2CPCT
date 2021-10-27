@@ -18,7 +18,7 @@ performCHORD(somaticVariants, structuralVariants)
 Performs CHORD analysis.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	runCHORD(dataSample$somaticVariants, dataSample$structuralVariants)
 
@@ -26,7 +26,7 @@ Performs CHORD analysis.
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},

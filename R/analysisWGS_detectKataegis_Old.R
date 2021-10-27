@@ -9,7 +9,7 @@
 #'
 #' @return (GRanges) A GRanges object containing all non-overlapping kataegis sites.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' # Example case.
 #' detectKataegis(mutData, min.snvs = 5, maxMeanDistance = 1E3, maxk = 6)
@@ -18,7 +18,7 @@
 #' @author Job van Riet \email{j.vanriet@erasmusmc.nl}
 #' @family CPCT
 #' @export
-detectKataegis <- function (snv, min.snvs = 5, maxMeanDistance = 2E3, maxk = 5){
+detectKataegis_OLD <- function (snv, min.snvs = 5, maxMeanDistance = 2E3, maxk = 5){
 
     # Input validation --------------------------------------------------------
 
@@ -115,7 +115,7 @@ detectKataegis <- function (snv, min.snvs = 5, maxMeanDistance = 2E3, maxk = 5){
         # Determine (APOBEC) signatures of kataegis events.
         sample.signatures <- R2CCBC::performMutSigMatch.Alexandrov(GRangesList(snvInKataegis), versionCOSMIC = 'v3', clust.method = 'none')
 
-        #sample.signatures <- R2CPCT::fitMutSigs(snvInKataegis, restrictiveFit = F)
+        #sample.signatures <- R2CPCT::fitMutSigs(snvInKataegis, restrictiveFit = FALSE)
 
         # Combine data.
         allKatInfoSample <- tibble::tibble(

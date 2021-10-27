@@ -16,7 +16,7 @@ importArriba(inputFolder)
 Import Arriba results.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	importArriba('/mnt/data2/hartwig/DR71/Oct2020/dataHMF/RNASeq/Arriba/')
 

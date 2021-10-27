@@ -11,16 +11,16 @@
 #'
 #' @return (ggplot) ggplot object.
 #' @export
-plotMutationalSignaturesCustom <- function(mutSigs, orderSamples = NULL, minContrib = 5, sortOnMeanContrib = T, minMutants = NULL, focusOnSig = NULL, onlyShowFocus = F){
+plotMutationalSignaturesCustom <- function(mutSigs, orderSamples = NULL, minContrib = 5, sortOnMeanContrib = TRUE, minMutants = NULL, focusOnSig = NULL, onlyShowFocus = FALSE){
 
     # Input validation --------------------------------------------------------
 
     checkmate::assertList(mutSigs)
-    checkmate::assertCharacter(orderSamples, null.ok = T)
+    checkmate::assertCharacter(orderSamples, null.ok = TRUE)
     checkmate::assertNumber(minContrib)
     checkmate::assertLogical(sortOnMeanContrib)
-    checkmate::assertNumber(minMutants, null.ok = T)
-    checkmate::assertCharacter(focusOnSig, null.ok = T)
+    checkmate::assertNumber(minMutants, null.ok = TRUE)
+    checkmate::assertCharacter(focusOnSig, null.ok = TRUE)
     checkmate::assertLogical(onlyShowFocus)
 
     sprintf('\tPlotting Mutational Signatures (Custom).') %>% ParallelLogger::logInfo()

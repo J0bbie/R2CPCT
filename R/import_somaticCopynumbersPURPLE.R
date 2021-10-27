@@ -6,7 +6,7 @@
 #'
 #' @return (GRanges) GRanges object containing the somatic variants and assorted annotations.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	importSomaticCopynumberPURPLE(pathCNV = '<sample>.purple.cnv.somatic.tsv')
 #'
@@ -27,7 +27,7 @@ importSomaticCopynumberPURPLE <- function(pathCNV){
 
     # Clean seqlevels and add chromosome information.
     sample.CNV <- readr::read_tsv(pathCNV, col_types = 'cddddddcccdddddd') %>%
-        GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = T) %>%
+        GenomicRanges::makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
         R2CPCT::cleanSeqlevels()
 
     # Add sample name

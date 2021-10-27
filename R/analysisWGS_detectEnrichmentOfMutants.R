@@ -97,7 +97,7 @@ detectEnrichmentOfMutants <- function(mutData, groupInfo, genesOfInterest, minRe
 
             test.df <- data.frame(
                 SYMBOL = gene,
-                p = stats::fisher.test(test, hybrid = F, alternative = 'greater', simulate.p.value = T)$p.value,
+                p = stats::fisher.test(test, hybrid = FALSE, alternative = 'greater', simulate.p.value = TRUE)$p.value,
                 group = k,
                 mutInGroup = test[1,1],
                 noMutInGroup = test[1,2],

@@ -8,15 +8,15 @@
 #'
 #' @return (ggplot) ggplot object.
 #' @export
-makeOncoplot.CPCT <- function(dataOncoplot, includedSamples = NULL, sortSamples = NULL, sortGenes = NULL, showAlleles = T){
+makeOncoplot.CPCT <- function(dataOncoplot, includedSamples = NULL, sortSamples = NULL, sortGenes = NULL, showAlleles = TRUE){
 
     # Input validation --------------------------------------------------------
 
     checkmate::assertClass(dataOncoplot, class = 'tbl_df')
-    checkmate::assertCharacter(includedSamples, null.ok = T)
-    checkmate::assertCharacter(sortSamples, null.ok = T)
-    checkmate::assertCharacter(sortGenes, null.ok = T)
-    checkmate::assertLogical(showAlleles, null.ok = T)
+    checkmate::assertCharacter(includedSamples, null.ok = TRUE)
+    checkmate::assertCharacter(sortSamples, null.ok = TRUE)
+    checkmate::assertCharacter(sortGenes, null.ok = TRUE)
+    checkmate::assertLogical(showAlleles, null.ok = TRUE)
 
 
     # Generalize consequences -------------------------------------------------
@@ -71,12 +71,12 @@ makeOncoplot.CPCT <- function(dataOncoplot, includedSamples = NULL, sortSamples 
         dplyr::filter(isMutant) %>%
         dplyr::group_by(SYMBOL) %>%
         dplyr::summarise(
-            'Splicing variants' = base::sum(Consequence.Mut.Clean == 'Splicing variant', na.rm = T),
-            'Structural variants' = base::sum(!is.na(Consequence.SV), na.rm = T),
-            'Coding variants' = base::sum(!is.na(Consequence.Mut), na.rm = T) - `Splicing variants`,
+            'Splicing variants' = base::sum(Consequence.Mut.Clean == 'Splicing variant', na.rm = TRUE),
+            'Structural variants' = base::sum(!is.na(Consequence.SV), na.rm = TRUE),
+            'Coding variants' = base::sum(!is.na(Consequence.Mut), na.rm = TRUE) - `Splicing variants`,
 
-            'Deep amplifications' = sum(Consequence.CNA == 'Deep Amplification', na.rm = T),
-            'Deep deletions' = sum(Consequence.CNA == 'Deep Deletion', na.rm = T),
+            'Deep amplifications' = sum(Consequence.CNA == 'Deep Amplification', na.rm = TRUE),
+            'Deep deletions' = sum(Consequence.CNA == 'Deep Deletion', na.rm = TRUE),
 
             totalMuts = `Coding variants` + `Structural variants` + `Splicing variants` + `Deep amplifications` + `Deep deletions`,
             mutSamples = dplyr::n_distinct(sample),
@@ -166,17 +166,17 @@ makeOncoplot.CPCT <- function(dataOncoplot, includedSamples = NULL, sortSamples 
 
     if(showAlleles){
         figOncoplot$Oncoplot <- ggplot2::ggplot(dataOncoplot, aes(x = sample, y = SYMBOL)) +
-            ggplot2::geom_tile(color = '#e6e6e6', lwd = .5, fill = 'white', height = .8, width = .7, na.rm = T) +
+            ggplot2::geom_tile(color = '#e6e6e6', lwd = .5, fill = 'white', height = .8, width = .7, na.rm = TRUE) +
 
-            ggplot2::geom_tile(aes(color = Consequence.AlleleA.CNA), fill = 'white', lwd = .4, na.rm = T, alpha = 1, height = .4, width = .7, position = ggplot2::position_nudge(y = +.2)) +
-            ggplot2::geom_tile(aes(color = Consequence.AlleleB.CNA), fill = 'white', lwd = .4, na.rm = T, alpha = 1, height = .4, width = .7, position = ggplot2::position_nudge(y = -.2)) +
+            ggplot2::geom_tile(aes(color = Consequence.AlleleA.CNA), fill = 'white', lwd = .4, na.rm = TRUE, alpha = 1, height = .4, width = .7, position = ggplot2::position_nudge(y = +.2)) +
+            ggplot2::geom_tile(aes(color = Consequence.AlleleB.CNA), fill = 'white', lwd = .4, na.rm = TRUE, alpha = 1, height = .4, width = .7, position = ggplot2::position_nudge(y = -.2)) +
 
-            ggplot2::geom_tile(aes(fill = Consequence.AlleleA.Mut), lwd = 0, na.rm = T, alpha = 1, height = .2, width = .4, position = ggplot2::position_nudge(y = +.2)) +
-            ggplot2::geom_tile(aes(fill = Consequence.AlleleB.Mut), lwd = 0, na.rm = T, alpha = 1, height = .2, width = .4, position = ggplot2::position_nudge(y = -.2)) +
+            ggplot2::geom_tile(aes(fill = Consequence.AlleleA.Mut), lwd = 0, na.rm = TRUE, alpha = 1, height = .2, width = .4, position = ggplot2::position_nudge(y = +.2)) +
+            ggplot2::geom_tile(aes(fill = Consequence.AlleleB.Mut), lwd = 0, na.rm = TRUE, alpha = 1, height = .2, width = .4, position = ggplot2::position_nudge(y = -.2)) +
 
             # Colors of mutations.
-            ggplot2::scale_fill_manual(values = colorMuts, drop = T) +
-            ggplot2::scale_color_manual(values = colorCNA, na.value = 'grey95', drop = T) +
+            ggplot2::scale_fill_manual(values = colorMuts, drop = TRUE) +
+            ggplot2::scale_color_manual(values = colorCNA, na.value = 'grey95', drop = TRUE) +
             ggplot2::scale_x_discrete(expand = c(.005,.01)) +
             ggplot2::scale_y_discrete(expand = c(.005,.01)) +
             ggplot2::labs(x = sprintf('Samples <sub>(<i>n</i> = %s)</sub>', dplyr::n_distinct(dataOncoplot$sample)), y = 'Genes') +
@@ -206,10 +206,10 @@ makeOncoplot.CPCT <- function(dataOncoplot, includedSamples = NULL, sortSamples 
     }else{
 
         figOncoplot$Oncoplot <- ggplot2::ggplot(dataOncoplot, aes(x = sample, y = SYMBOL)) +
-            ggplot2::geom_tile(aes(fill = Consequence.CNA), lwd = .2, color = 'grey90', na.rm = T) +
-            ggplot2::geom_tile(aes(fill = Consequence.Mut.Clean), lwd = .2, na.rm = T, alpha = 1, height = .5, width = .5) +
+            ggplot2::geom_tile(aes(fill = Consequence.CNA), lwd = .2, color = 'grey90', na.rm = TRUE) +
+            ggplot2::geom_tile(aes(fill = Consequence.Mut.Clean), lwd = .2, na.rm = TRUE, alpha = 1, height = .5, width = .5) +
             # Colors of mutations.
-            ggplot2::scale_fill_manual(values = colorMuts, drop = T) +
+            ggplot2::scale_fill_manual(values = colorMuts, drop = TRUE) +
             ggplot2::labs(x = sprintf('Samples <sub>(<i>n</i> = %s)</sub>', dplyr::n_distinct(dataOncoplot$sample)), y = 'Genes') +
             # Legend settings.
             ggplot2::guides( fill = guide_legend(title = 'Mutational Categories', title.position = 'top', title.hjust = 0.5, ncol = 3, keywidth = 0.5, keyheight = 0.5)) +
@@ -266,8 +266,8 @@ makeOncoplot.CPCT <- function(dataOncoplot, includedSamples = NULL, sortSamples 
 
     ## Figure - Evidence ----
     figOncoplot$Oncoplot.Evidence <- ggplot2::ggplot(dataOncoplot.Evidence, aes(x = 'Evidence', y = SYMBOL, fill = value)) +
-        ggplot2::geom_tile(data = dataOncoplot.Evidence %>% dplyr::filter(variable == 'GISTIC2Peak'), color = 'grey95', size = 0.25, na.rm = T, height = .9) +
-        ggplot2::geom_tile(data = dataOncoplot.Evidence %>% dplyr::filter(variable == 'dNdS'), size = 0.25, na.rm = T, alpha = 1, height = .5, width = .5) +
+        ggplot2::geom_tile(data = dataOncoplot.Evidence %>% dplyr::filter(variable == 'GISTIC2Peak'), color = 'grey95', size = 0.25, na.rm = TRUE, height = .9) +
+        ggplot2::geom_tile(data = dataOncoplot.Evidence %>% dplyr::filter(variable == 'dNdS'), size = 0.25, na.rm = TRUE, alpha = 1, height = .5, width = .5) +
         ggplot2::scale_x_discrete(expand = c(0,0)) +
         ggplot2::scale_y_discrete(expand = c(0,0)) +
         # Colors of mutations.

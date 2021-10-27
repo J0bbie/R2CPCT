@@ -149,7 +149,7 @@ driverList <- driverInputs$Combined %>%
     dplyr::ungroup()
 
 # Convert to GRanges.
-driverList <- GenomicRanges::makeGRangesFromDataFrame(driverList, keep.extra.columns = T)
+driverList <- GenomicRanges::makeGRangesFromDataFrame(driverList, keep.extra.columns = TRUE)
 
 # Retrieve the common gene name.
 commonSYMBOL <- limma::alias2SymbolTable(driverList$SYMBOL)
@@ -161,4 +161,4 @@ S4Vectors::mcols(driverList.Gr) <- driverList
 driverList <- driverList.Gr
 
 # Add to R2CPCT
-usethis::use_data(driverList, overwrite = T)
+usethis::use_data(driverList, overwrite = TRUE)

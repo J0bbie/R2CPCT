@@ -16,7 +16,7 @@ importPurityStatsPURPLE(pathStats)
 Import the driver catalog as determined by HMF.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	importPurityStatsPURPLE(pathStats = '<sample>.purple.purity.tsv')
 
@@ -24,7 +24,7 @@ Import the driver catalog as determined by HMF.
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importSomaticCopynumberPURPLE}()},

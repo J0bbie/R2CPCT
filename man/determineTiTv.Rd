@@ -16,9 +16,9 @@ determineTiTv(mutMatrix.SNV)
 Determine the number of Ti and Tv contexts and Ti/Tv ratio per sample.
 }
 \examples{
-\dontrun{
+\donttest{
 
- mutSigs <- R2CPCT::fitMutSigs(data.Cohort$somaticVariants, restrictiveFit = F)
+ mutSigs <- R2CPCT::fitMutSigs(data.Cohort$somaticVariants, restrictiveFit = FALSE)
  determineTiTv(mutSigs$SNV$mutMatrix)
 
 }

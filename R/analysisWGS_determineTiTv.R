@@ -3,25 +3,25 @@
 #' @param mutMatrix.SNV (matrix): Mutational motif matrix derived from the \link[R2CPCT]{fitMutSigs} function.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
-#'  mutSigs <- R2CPCT::fitMutSigs(data.Cohort$somaticVariants, restrictiveFit = F)
+#'  mutSigs <- R2CPCT::fitMutSigs(data.Cohort$somaticVariants, restrictiveFit = FALSE)
 #'  determineTiTv(mutSigs$SNV$mutMatrix)
 #'
 #' }
 #' @return (tibble) Returns a tibble of the Ti/Tv number and ratio per sample.
 #' @export
 determineTiTv <- function(mutMatrix.SNV){
-
+    
     # Input validation --------------------------------------------------------
-
+    
     checkmate::assertMatrix(mutMatrix.SNV)
-
+    
     sprintf('Calculating Ti/Tv ratios for %s sample(s).', dplyr::n_distinct(base::colnames(mutMatrix.SNV))) %>% ParallelLogger::logInfo()
-
-
+    
+    
     # Determine Ti/Tv mutations and ratio -------------------------------------
-
+    
     data.MutContexts <- mutMatrix.SNV %>%
         reshape2::melt() %>%
         dplyr::select(mutContext = Var1, sample = Var2, value) %>%
@@ -37,14 +37,14 @@ determineTiTv <- function(mutMatrix.SNV){
         dplyr::group_by(sample, mutationalType) %>%
         dplyr::summarise(totalValue = base::sum(value)) %>%
         dplyr::ungroup() %>%
-
+        
         # Determine Ti/Tv ratio per sample.
         dplyr::mutate(TiTvType = ifelse(grepl('\nTv', mutationalType), 'Transversion', 'Transition')) %>%
         dplyr::group_by(sample, TiTvType) %>% dplyr::mutate(totalGroupInSample = sum(totalValue)) %>% dplyr::ungroup() %>%
         dplyr::group_by(sample) %>% dplyr::mutate(TiTvRatio = unique(totalGroupInSample[TiTvType == 'Transition']) / unique(totalGroupInSample[TiTvType == 'Transversion'])) %>% dplyr::ungroup()
-
-
+    
+    
     # Return statement --------------------------------------------------------
-
+    
     return(data.MutContexts)
 }

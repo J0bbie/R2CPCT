@@ -16,7 +16,7 @@ importdriverCatalogHMF(pathCatalog)
 Import the driver catalog as determined by HMF.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	importdriverCatalogHMF(pathCatalog = '<sample>.driver.catalog.tsv')
 
@@ -24,7 +24,7 @@ Import the driver catalog as determined by HMF.
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},

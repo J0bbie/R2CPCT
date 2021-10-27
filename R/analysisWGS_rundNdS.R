@@ -1,9 +1,9 @@
 #' @title Perform dN/dS analysis on a set of mutations from multiple CPCT-02 samples.
 #'
-#' @details The dNdS database was made from ENSEMBL v101 (GENCODE v35) using the following code and following the dN/dS buildref vignette:
+#' @details The dNdS database was made from ENSEMBL v104 (GENCODE v38) using the following code and following the dN/dS buildref vignette:
 #'
 #'  # Remove non-standard chromosomes, clone-based genes and CDS which cannot be divided by 3.
-#'  ENSEMBLv101 <- readr::read_tsv('~/test/dNdS/Oct2020/mart_export.txt') %>%
+#'  ENSEMBLv104 <- readr::read_tsv('~/test/mart_export.txt') %>%
 #'   dplyr::filter(!grepl('_', `Chromosome/scaffold name`)) %>%
 #'   dplyr::filter(`CDS Length` %% 3 == 0) %>%
 #'   dplyr::filter(!is.na(`Genomic coding start`)) %>%
@@ -21,18 +21,18 @@
 #'        'cds.end' = `CDS end`,
 #'        'length' = `CDS Length`,
 #'        'strand' = Strand)
-#'
-#' write.table(ENSEMBLv101, file = '~/test/dNdS/Oct2020/mart_export_filtered.txt', row.names = F, quote = F)
-#'
+#'  
+#' write.table(ENSEMBLv104, file = '~/test/mart_export_filtered.txt', sep = '\t', row.names = FALSE, quote = FALSE)
+#' 
 #' # Generate refCDS database.
-#' pathCDS = '~/test/dNdS/Oct2020/mart_export_filtered.txt'
-#' pathFasta = '/mnt/data/ccbc_environment/general/genomes/hsapiens/hg19_HMF/Homo_sapiens.GRCh37.GATK.illumina.fasta'
-#' dndscv::buildref(cdsfile = pathCDS, genomefile = pathFasta, outfile = 'inst/extdata/refCDS_ENSEMBLv101_HMF.rda', excludechrs='MT', useids = T)
+#' pathCDS = '~/test/mart_export_filtered.txt'
+#' pathFasta = '/mnt/onco0002/repository/general/genomes/hsapiens/hg19_HMF/Homo_sapiens.GRCh37.GATK.illumina.fasta'
+#' dndscv::buildref(cdsfile = pathCDS, genomefile = pathFasta, outfile = 'inst/extdata/refCDS_ENSEMBLv104_HMF.rda', excludechrs='MT', useids = TRUE)
 #'
 #' @param dataMuts (VRanges): VRanges containing the mutations which will be inputted into dN/dS.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #'  data.Cohort <- R2CPCT::importWGSOfCohort(<cpctIds>, <combinedData>)
 #'  rundNdS(data.Cohort$somaticVariants)
@@ -56,7 +56,7 @@ rundNdS <- function(dataMuts){
     dataMuts.df <- dataMuts.df %>% dplyr::mutate(chr = base::gsub('chr', '', chr))
 
     # Perform dN/dS algorithm.
-    output.dNdS <- dndscv::dndscv(dataMuts.df, refdb = system.file('extdata/refCDS_ENSEMBLv101_HMF.rda', package = 'R2CPCT'), outp = 3)
+    output.dNdS <- dndscv::dndscv(dataMuts.df, refdb = system.file('extdata/refCDS_ENSEMBLv104_HMF.rda', package = 'R2CPCT'), outp = 3)
 
     # Remove large (unused) annotation database.
     output.dNdS$annotmuts <- NULL

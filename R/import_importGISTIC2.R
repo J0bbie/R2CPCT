@@ -4,7 +4,7 @@
 #' @param gisticFolder (character): Path to GISTIC output folder.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	Folder to the GISTIC2 output.
 #' 	importGISTIC2('/tmp/etc/etc/')
@@ -22,22 +22,22 @@ importGISTIC2 <- function(gisticFolder){
     checkmate::checkCharacter(gisticFolder)
 
     # Required files.
-    gisticAllLesionsFile <- base::list.files(gisticFolder, pattern = 'all_lesions.conf.*txt', full.names = T)
-    gisticScoresFile <- base::list.files(gisticFolder, pattern = 'scores\\.gistic', full.names = T)
-    gisticBroadFile <- base::list.files(gisticFolder, pattern = 'broad_significance_results.txt', full.names = T)
-    gisticBroadPerArmFile <- base::list.files(gisticFolder, pattern = 'broad_values_by_arm.txt', full.names = T)
+    gisticAllLesionsFile <- base::list.files(gisticFolder, pattern = 'all_lesions.conf.*txt', full.names = TRUE)
+    gisticScoresFile <- base::list.files(gisticFolder, pattern = 'scores\\.gistic', full.names = TRUE)
+    gisticBroadFile <- base::list.files(gisticFolder, pattern = 'broad_significance_results.txt', full.names = TRUE)
+    gisticBroadPerArmFile <- base::list.files(gisticFolder, pattern = 'broad_values_by_arm.txt', full.names = TRUE)
 
     base::sprintf('Importing GISTIC2 results from: %s', gisticFolder) %>% ParallelLogger::logInfo()
 
     # Select protein-coding genes only.
-    GENCODE.v35 <- R2CPCT::GENCODE.v35[R2CPCT::GENCODE.v35$gene_type == 'protein_coding',]
+    GENCODE.v38 <- R2CPCT::GENCODE.v38[R2CPCT::GENCODE.v38$gene_type == 'protein_coding',]
 
     # Import recurrently-detected peaks ---------------------------------------
 
     base::sprintf('\tImporting recurrently-detected peaks.') %>% ParallelLogger::logInfo()
 
     # Import peaks, clean empty colunms.
-    gisticAllLesionsCN <- readr::read_delim(gisticAllLesionsFile, delim = '\t', trim_ws = T)
+    gisticAllLesionsCN <- readr::read_delim(gisticAllLesionsFile, delim = '\t', trim_ws = TRUE)
     gisticAllLesionsCN[grepl('^X', colnames(gisticAllLesionsCN))] <- NULL
     gisticAllLesionsCN <- gisticAllLesionsCN[!grepl('CN values', gisticAllLesionsCN$`Unique Name`),]
 
@@ -51,9 +51,9 @@ importGISTIC2 <- function(gisticFolder){
     peakSites$nGenes.Drivers <- peakSites$overlapGenes.Drivers <- peakSites$nGenes.GENCODE <- peakSites$overlapGenes.GENCODE <- NA
 
     # Find overlap with genes. Concatenate per overlap.
-    overlapGenes.GENCODE <- tibble::as_tibble(IRanges::findOverlaps(peakSites, GENCODE.v35, minoverlap = 10))
-    overlapGenes.GENCODE <- overlapGenes.GENCODE %>% dplyr::group_by(queryHits) %>% dplyr::summarise(overlappingGenes = paste(unique(unlist(list(stats::na.omit(GENCODE.v35[subjectHits]$SYMBOL)))), collapse = ', '), nGenes = length(unique(unlist(list(stats::na.omit(GENCODE.v35[subjectHits]$ENSEMBL))))))
-    overlapGenes.GENCODE$overlappingGenes <- paste(overlapGenes.GENCODE$overlappingGenes, '(GENCODE v35)')
+    overlapGenes.GENCODE <- tibble::as_tibble(IRanges::findOverlaps(peakSites, GENCODE.v38, minoverlap = 10))
+    overlapGenes.GENCODE <- overlapGenes.GENCODE %>% dplyr::group_by(queryHits) %>% dplyr::summarise(overlappingGenes = paste(unique(unlist(list(stats::na.omit(GENCODE.v38[subjectHits]$SYMBOL)))), collapse = ', '), nGenes = length(unique(unlist(list(stats::na.omit(GENCODE.v38[subjectHits]$ENSEMBL))))))
+    overlapGenes.GENCODE$overlappingGenes <- paste(overlapGenes.GENCODE$overlappingGenes, '(GENCODE v38)')
 
     overlapGenes.Drivers <- tibble::as_tibble(IRanges::findOverlaps(peakSites, R2CPCT::driverList, minoverlap = 10))
     overlapGenes.Drivers <- overlapGenes.Drivers %>% dplyr::group_by(queryHits) %>% dplyr::summarise(overlappingGenes = paste(unique(unlist(list(stats::na.omit(R2CPCT::driverList[subjectHits]$SYMBOL)))), collapse = ', '), nGenes = length(unique(unlist(list(stats::na.omit(R2CPCT::driverList[subjectHits]$ENSEMBL))))))
@@ -72,8 +72,8 @@ importGISTIC2 <- function(gisticFolder){
     peaksWithOverlap[peaksWithOverlap$originalPeak %in% overlapGenes.Drivers$queryHits]$nGenes.Drivers <- overlapGenes.Drivers$nGenes
 
     #Find nearest up/downstream gene of peaks without overlapping genes.
-    peaksWithoutOverlap <- peakSites[!1:length(peakSites) %in% overlapGenes.GENCODE$queryHits]
-    peaksWithoutOverlap$overlapGenes.GENCODE <- GENCODE.v35[IRanges::nearest(peaksWithoutOverlap, GENCODE.v35)]$SYMBOL
+    peaksWithoutOverlap <- peakSites[!seq_len(length(peakSites)) %in% overlapGenes.GENCODE$queryHits]
+    peaksWithoutOverlap$overlapGenes.GENCODE <- GENCODE.v38[IRanges::nearest(peaksWithoutOverlap, GENCODE.v38)]$SYMBOL
     if(length(peaksWithoutOverlap) != 0) peaksWithoutOverlap$overlapGenes.GENCODE <- paste(peaksWithoutOverlap$overlapGenes.GENCODE, '(Nearest)')
     if(length(peaksWithoutOverlap) != 0) peaksWithoutOverlap$nGenes.GENCODE <- 0
 
@@ -91,20 +91,20 @@ importGISTIC2 <- function(gisticFolder){
     # Import GISTIC scores ----------------------------------------------------
 
     base::sprintf('\tImporting all GISTIC2 peaks.') %>% ParallelLogger::logInfo()
-    gisticPeakScores <- readr::read_delim(gisticScoresFile, delim = '\t', trim_ws = T)
+    gisticPeakScores <- readr::read_delim(gisticScoresFile, delim = '\t', trim_ws = TRUE)
 
 
     # Import broad-level results ----------------------------------------------
 
     base::sprintf('\tImporting GISTIC2 arm-level results peaks.') %>% ParallelLogger::logInfo()
     if(!S4Vectors::isEmpty(gisticBroadFile)){
-        gisticBroadScores <- readr::read_delim(gisticBroadFile, delim = '\t', trim_ws = T)
+        gisticBroadScores <- readr::read_delim(gisticBroadFile, delim = '\t', trim_ws = TRUE)
     }else{
         gisticBroadScores <- NULL
     }
 
     if(!S4Vectors::isEmpty(gisticBroadPerArmFile)){
-        gisticBroadScoresPerArm <- readr::read_delim(gisticBroadPerArmFile, delim = '\t', trim_ws = T) %>%
+        gisticBroadScoresPerArm <- readr::read_delim(gisticBroadPerArmFile, delim = '\t', trim_ws = TRUE) %>%
             reshape2::melt(id.vars = 'Chromosome Arm') %>%
             dplyr::mutate(`Chromosome Arm` = factor(`Chromosome Arm`, levels = gtools::mixedsort(unique(`Chromosome Arm`))))
     }else{

@@ -10,14 +10,14 @@
 #' @param pathLINX (character): Path to the folder containing LINX and the respective databases.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #'  runLINX('DR-071/combinedData/', c('CPCT02124567', 'CPCT02012345123'), nThreads = 10)
 #'
 #' }
 #' @return (NULL) Does not return anything, only outputs logging messages.
 #' @export
-performLINX <- function(pathCombined, cpctIds, nThreads, dryRun = T, pathLINX = '/mnt/onco0002/repository/software/LINX_v1.16/'){
+performLINX <- function(pathCombined, cpctIds, nThreads, dryRun = TRUE, pathLINX = '/mnt/onco0002/repository/software/LINX_v1.16/'){
 
     # Input validation --------------------------------------------------------
 
@@ -37,7 +37,7 @@ performLINX <- function(pathCombined, cpctIds, nThreads, dryRun = T, pathLINX = 
     commands.LINX <- base::unlist(base::lapply(cpctIds, function(cpctId){
 
         # Retrieve path to PURPLE/GRIDSS SV file.
-        svFile <- base::list.files(pathCombined, full.names = T, pattern = paste0(cpctId, '\\.purple.sv.*vcf.gz$'))
+        svFile <- base::list.files(pathCombined, full.names = TRUE, pattern = paste0(cpctId, '\\.purple.sv.*vcf.gz$'))
 
         sprintf('java -jar %s/linx_v1.16.jar
         -sample %s -sv_vcf %s -purple_dir %s -output_dir %s -check_fusions -check_drivers
@@ -55,7 +55,7 @@ performLINX <- function(pathCombined, cpctIds, nThreads, dryRun = T, pathLINX = 
     sprintf('\tRunning LINX commands.') %>% ParallelLogger::logInfo()
 
     tmpFile <- tempfile()
-    utils::write.table(commands.LINX, tmpFile, sep = '\t', quote = F, row.names = F, col.names = F)
+    utils::write.table(commands.LINX, tmpFile, sep = '\t', quote = FALSE, row.names = FALSE, col.names = FALSE)
 
     if(dryRun){
         sprintf('Run the bash commands in the following (tmp) file to perform LINX on your samples:\n %s', sprintf('cat %s | parallel -j %s', tmpFile, nThreads)) %>% ParallelLogger::logInfo()
@@ -69,7 +69,7 @@ performLINX <- function(pathCombined, cpctIds, nThreads, dryRun = T, pathLINX = 
     # Cleaning up LINX --------------------------------------------------------
 
     sprintf('\tCleaning up LINX files.') %>% ParallelLogger::logInfo()
-    base::file.remove(base::list.files(pathCombined, pattern = '\\.linx.vis_|\\.linx.viral_inserts.tsv|\\.linx.svs.tsv|\\.linx.links.tsv|linx.version|\\.linx.clusters.tsv|\\.linx.breakend.tsv', full.names = T))
+    base::file.remove(base::list.files(pathCombined, pattern = '\\.linx.vis_|\\.linx.viral_inserts.tsv|\\.linx.svs.tsv|\\.linx.links.tsv|linx.version|\\.linx.clusters.tsv|\\.linx.breakend.tsv', full.names = TRUE))
 
 
     # Return statement --------------------------------------------------------

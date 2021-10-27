@@ -11,12 +11,12 @@
 #'
 #' @return (VRanges) VRanges object containing the somatic variants and assorted annotations.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	# Path to VEP annotated VCF.
 #' 	path <- '<CPCT#R>_<CPCT#T>_post_processed.hg19_multianno.vcf'
 #'
-#' 	sampleX.somaticVariants <- importCPCT.somaticVariants(path, passOnly = T)
+#' 	sampleX.somaticVariants <- importCPCT.somaticVariants(path, passOnly = TRUE)
 #'
 #' 	# View variant annotation.
 #' 	do.call(rbind, sampleX.somaticVariants$annotation)
@@ -25,7 +25,7 @@
 #' @author Job van Riet \email{j.vanriet@erasmusmc.nl}
 #' @family CPCT
 #' @export
-importSomaticVariantsVEP <- function(pathVCF, passOnly = T, gnomADe = 0.001, gnomADg = 0.005, keepAnnotation = T){
+importSomaticVariantsVEP <- function(pathVCF, passOnly = TRUE, gnomADe = 0.001, gnomADg = 0.005, keepAnnotation = TRUE){
   
   # Input validation --------------------------------------------------------
   
@@ -41,7 +41,7 @@ importSomaticVariantsVEP <- function(pathVCF, passOnly = T, gnomADe = 0.001, gno
   sprintf('Importing VCF: %s', pathVCF) %>% ParallelLogger::logInfo()
   
   # Clean seqlevels and add chromosome information.
-  sample.VCF <- VariantAnnotation::readVcfAsVRanges(x = pathVCF, genome = 'hg19', use.names = T) %>%
+  sample.VCF <- VariantAnnotation::readVcfAsVRanges(x = pathVCF, genome = 'hg19', use.names = TRUE) %>%
     R2CPCT::cleanSeqlevels(excludeChr = NULL)
   
   # Only retain a single record of each variant (of the tumor)
@@ -87,10 +87,10 @@ importSomaticVariantsVEP <- function(pathVCF, passOnly = T, gnomADe = 0.001, gno
   varInfo$SYMBOL <- base::ifelse(is.na(commonSYMBOL), varInfo$SYMBOL, commonSYMBOL)
   
   # Convert all columns.
-  varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = tidyselect::everything(), .fns = utils::type.convert, as.is = T))
+  varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = tidyselect::everything(), .fns = utils::type.convert, as.is = TRUE))
   
   # Convert columns with >50 levels into characters.
-  varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = base::colnames(varInfo[base::sapply(varInfo, function(x) base::length(base::levels(x))) >= 50]), .fns = base::as.character))
+  varInfo <- varInfo %>% dplyr::mutate(dplyr::across(.cols = base::colnames(varInfo[base::vapply(varInfo, FUN = function(x) base::length(base::levels(x)), FUN.VALUE = 1) >= 50]), .fns = base::as.character))
   
   # Return annotation to the VRanges.
   S4Vectors::mcols(sample.VCF) <- varInfo

@@ -4,7 +4,7 @@
 #'
 #' @return (character) Character vector of matching centers.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	meta$Center <- findCPCTCenter(CPCTId)
 #'
@@ -21,7 +21,7 @@ findCPCTCenter <- function(x){
 
     # Read sites --------------------------------------------------------------
 
-    siteCodes <- utils::read.delim(system.file("extdata/CPCTSites.txt", package="R2CPCT"), as.is = T, colClasses = 'character')
+    siteCodes <- utils::read.delim(system.file("extdata/CPCTSites.txt", package="R2CPCT"), as.is = TRUE, colClasses = 'character')
 
 
     # Overlap -----------------------------------------------------------------

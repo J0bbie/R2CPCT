@@ -9,7 +9,7 @@ generateCombinedReport(
   dNdS,
   GISTIC2,
   nThreads = 40,
-  mutantsOnly = T
+  mutantsOnly = TRUE
 )
 }
 \arguments{
@@ -33,7 +33,7 @@ The combined report will only contain protein-coding genes which have at least a
 Use the 'selectedGenes' parameter to retrieve your genes-of-interests, even if no aberrations were detected.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	# Generate a combined gene-level report of an imported WGS cohort (which could be a subset).
 	generateCombinedReport(data.Cohort, results.Cohort$dNdS, results.Cohort$GISTIC2)

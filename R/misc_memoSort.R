@@ -4,7 +4,7 @@
 #'
 #' @return (dataframe) Sorted dataframe of genes vs samples.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' }
 #' @author Job van Riet \email{j.vanriet@erasmusmc.nl}
@@ -21,8 +21,8 @@ memoSort <- function(M) {
     geneOrder <- base::sort(rowSums(M), decreasing = TRUE, index.return = TRUE)$ix
 
     scoreCol <- function(x) {
-        score <- 0;
-        for(i in 1:length(x)) {
+        score <- 0
+        for(i in seq_len(length(x))) {
             if(x[i]) {
                 score <- score + 2^(length(x)-i)
             }

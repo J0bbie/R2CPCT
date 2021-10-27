@@ -5,7 +5,7 @@
 #' @param minTAF.SV (double): Min. TAF for structural variants in order to count.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #'  data.Cohort <- R2CPCT::importWGSOfCohort(<cpctIds>, <combinedData>)
 #'  determineMutationalBurden(data.Cohort)

@@ -4,7 +4,12 @@
 \alias{importWGSOfCohort}
 \title{Imports all the WGS data of multiple samples (cohort).}
 \usage{
-importWGSOfCohort(cpctIds, inputFolder, nThreads = 1, performAggregation = T)
+importWGSOfCohort(
+  cpctIds,
+  inputFolder,
+  nThreads = 1,
+  performAggregation = TRUE
+)
 }
 \arguments{
 \item{cpctIds}{(character): Full CPCT identifiers of samples, including the T suffixes (used to find files).}
@@ -22,7 +27,7 @@ importWGSOfCohort(cpctIds, inputFolder, nThreads = 1, performAggregation = T)
 Imports all the WGS data of multiple samples (cohort).
 }
 \examples{
-\dontrun{
+\donttest{
 
 	importWGSOfCohort(cpctId = '<CPCTIDs>', 'combinedData/')
 
@@ -30,7 +35,7 @@ Imports all the WGS data of multiple samples (cohort).
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},

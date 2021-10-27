@@ -21,7 +21,7 @@ proteinDomains <- data.table::fread(input = '~/prot2hg_1938_112019.csv', sep = '
 proteinDomains <- proteinDomains %>% dplyr::select(protein_ID, gene, prot_start, prot_end, type, feature_name, note, ensembl) %>% dplyr::distinct()
 
 # Convert to GRanges.
-proteinDomains <- GenomicRanges::makeGRangesFromDataFrame(proteinDomains, keep.extra.columns = T, seqnames.field = 'protein_ID', start.field = 'prot_start', end.field = 'prot_end')
+proteinDomains <- GenomicRanges::makeGRangesFromDataFrame(proteinDomains, keep.extra.columns = TRUE, seqnames.field = 'protein_ID', start.field = 'prot_start', end.field = 'prot_end')
 
 # Factorize to reduce size.
 proteinDomains$type <- factor(proteinDomains$type)

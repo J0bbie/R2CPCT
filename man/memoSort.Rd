@@ -16,7 +16,7 @@ memoSort(M)
 Sorting function based on mut. exclusivity.
 }
 \examples{
-\dontrun{
+\donttest{
 
 }
 }

@@ -20,7 +20,7 @@ determineMutationalBurden(data.Cohort, minTAF.Muts = 0, minTAF.SV = 0)
 Determine the mutational burden of the CPCT-02/HMF samples.
 }
 \examples{
-\dontrun{
+\donttest{
 
  data.Cohort <- R2CPCT::importWGSOfCohort(<cpctIds>, <combinedData>)
  determineMutationalBurden(data.Cohort)

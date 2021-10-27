@@ -10,7 +10,7 @@
 #'
 #' @return (list) GISTIC
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	gisticOutput <- R2CPCT::performGISTIC2(regions = data.Cohort$copyNumbers)
 #'
@@ -31,7 +31,7 @@ performGISTIC2 <- function(regions, outputFolder, gisticPath = '/mnt/onco0002/re
 
     checkmate::assertAccess(outputFolder, access = 'rw')
     checkmate::assertFileExists(gisticPath, access = 'x')
-    checkmate::assertCharacter(gisticParameters, null.ok = T)
+    checkmate::assertCharacter(gisticParameters, null.ok = TRUE)
     checkmate::assertFileExists(gisticAnno, access = 'r')
 
     base::sprintf('Generating command for GISTIC 2.0 on %s samples.', dplyr::n_distinct(regions$sample)) %>% ParallelLogger::logInfo()
@@ -55,7 +55,7 @@ performGISTIC2 <- function(regions, outputFolder, gisticPath = '/mnt/onco0002/re
     temp.input <- base::tempfile(pattern = '', fileext = '.txt')
 
     # Write regions to temp. file.
-    utils::write.table(gistic.regions, temp.input, col.names = F, append = F, quote = F, row.names = F, sep = '\t')
+    utils::write.table(gistic.regions, temp.input, col.names = FALSE, append = FALSE, quote = FALSE, row.names = FALSE, sep = '\t')
 
     # Generate GISTIC command.
     command.GISTIC <- base::sprintf('%s -b %s -seg %s -refgene %s %s',

@@ -8,7 +8,7 @@ performLINX(
   pathCombined,
   cpctIds,
   nThreads,
-  dryRun = T,
+  dryRun = TRUE,
   pathLINX = "/mnt/onco0002/repository/software/LINX_v1.16/"
 )
 }
@@ -31,7 +31,7 @@ For installation instructions, please see the 'howToInstallLINX' vignette.
 It will output the (relevant) files in the combinedData/ folder.
 }
 \examples{
-\dontrun{
+\donttest{
 
  runLINX('DR-071/combinedData/', c('CPCT02124567', 'CPCT02012345123'), nThreads = 10)
 

@@ -16,7 +16,7 @@ importLINXFusions(pathFusions)
 Import detected fusions by LINX.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	importLINXFusions(pathFusions = '<sample>.linx.fusion.tsv')
 
@@ -24,7 +24,7 @@ Import detected fusions by LINX.
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importPurityStatsPURPLE}()},
 \code{\link{importSomaticCopynumberPURPLE}()},

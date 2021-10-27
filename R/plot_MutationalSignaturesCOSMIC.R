@@ -11,16 +11,16 @@
 #'
 #' @return (ggplot) ggplot object.
 #' @export
-plotMutationalSignaturesCOSMIC <- function(mutSigs, orderSamples = NULL, minContrib = 5, minMutants = NULL, combineSigs = T, focusOnSig = NULL, onlyShowFocus = F){
+plotMutationalSignaturesCOSMIC <- function(mutSigs, orderSamples = NULL, minContrib = 5, minMutants = NULL, combineSigs = TRUE, focusOnSig = NULL, onlyShowFocus = FALSE){
 
     # Input validation --------------------------------------------------------
 
     checkmate::assertList(mutSigs)
-    checkmate::assertCharacter(orderSamples, null.ok = T)
+    checkmate::assertCharacter(orderSamples, null.ok = TRUE)
     checkmate::assertNumber(minContrib)
-    checkmate::assertNumber(minMutants, null.ok = T)
+    checkmate::assertNumber(minMutants, null.ok = TRUE)
     checkmate::assertLogical(combineSigs)
-    checkmate::assertCharacter(focusOnSig, null.ok = T)
+    checkmate::assertCharacter(focusOnSig, null.ok = TRUE)
     checkmate::assertLogical(onlyShowFocus)
 
     sprintf('\tPlotting Mutational Signatures (COSMIC).') %>% ParallelLogger::logInfo()

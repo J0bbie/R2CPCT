@@ -4,7 +4,7 @@
 #' @param structuralVariants (GRanges): GRanges of a single sample from \link[R2CPCT]{importStructuralVariantsPURPLE}.
 #' @return (list) Tibble with the CHORD results.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	runCHORD(dataSample$somaticVariants, dataSample$structuralVariants)
 #'

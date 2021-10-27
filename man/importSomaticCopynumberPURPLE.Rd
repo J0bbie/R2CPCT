@@ -19,7 +19,7 @@ Import the somatic CNV segments as estimated by PURPLE.
 Will also convert the absolute copynumbers into CN-States for downstream analysis.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	importSomaticCopynumberPURPLE(pathCNV = '<sample>.purple.cnv.somatic.tsv')
 
@@ -27,7 +27,7 @@ Will also convert the absolute copynumbers into CN-States for downstream analysi
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},

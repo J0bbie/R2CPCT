@@ -7,7 +7,7 @@
 #' @param sigType (character): What type of signature should be looked for (motif matrix should match).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #'  data.Cohort <- R2CPCT::importWGSOfCohort(<cpctIds>, <combinedData>)
 #'  data.MutSigs <- R2CPCT::fitMutSigs(data.Cohort$somaticVariants, motifMatrix)
@@ -37,7 +37,7 @@ fitCustomMutSigs <- function(dataMuts, motifMatrix, sigType = 'SBS'){
     sprintf('\tConverting input mutations into GRangesLists.') %>% ParallelLogger::logInfo()
 
     # Convert mutations to correct GRanges for input into MutationalPatterns.
-    convertMuts <- function(x, DBS = F){
+    convertMuts <- function(x, DBS = FALSE){
 
         S4Vectors::mcols(x) <- S4Vectors::DataFrame(sample = x$sample)
 
@@ -60,7 +60,7 @@ fitCustomMutSigs <- function(dataMuts, motifMatrix, sigType = 'SBS'){
 
     # Generate a GRangesList, split per sample, per mutational type.
     if(sigType == 'SBS') inputMuts <- convertMuts(dataMuts[dataMuts$mutType == 'SNV'])
-    if(sigType == 'DBS') inputMuts <- convertMuts(dataMuts[dataMuts$mutType == 'MNV' & base::nchar(VariantAnnotation::ref(dataMuts)) == 2 & base::nchar(VariantAnnotation::alt(dataMuts)) == 2], DBS = T)
+    if(sigType == 'DBS') inputMuts <- convertMuts(dataMuts[dataMuts$mutType == 'MNV' & base::nchar(VariantAnnotation::ref(dataMuts)) == 2 & base::nchar(VariantAnnotation::alt(dataMuts)) == 2], DBS = TRUE)
     if(sigType == 'ID') inputMuts <- convertMuts(dataMuts[dataMuts$mutType == 'InDel'])
 
 

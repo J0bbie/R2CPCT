@@ -3,7 +3,7 @@
 #' @param pathFusions (character): Path to the <sample>.linx.fusion.tsv file containing predicted fusions.
 #' @return (tibble) Tibble containing the predicted WGS fusions of the sample.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	importLINXFusions(pathFusions = '<sample>.linx.fusion.tsv')
 #'

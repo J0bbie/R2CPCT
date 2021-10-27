@@ -9,7 +9,7 @@ makeOncoplot.CPCT(
   includedSamples = NULL,
   sortSamples = NULL,
   sortGenes = NULL,
-  showAlleles = T
+  showAlleles = TRUE
 )
 }
 \arguments{

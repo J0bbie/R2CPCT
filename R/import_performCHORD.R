@@ -4,7 +4,7 @@
 #' @param structuralVariants (GRanges): GRanges of a single sample from \link[R2CPCT]{importStructuralVariantsPURPLE}.
 #' @return (list) list with the CHORD contexts and results.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	runCHORD(dataSample$somaticVariants, dataSample$structuralVariants)
 #'
@@ -17,7 +17,7 @@ performCHORD <- function(somaticVariants, structuralVariants){
     # Input validation --------------------------------------------------------
 
     checkmate::assertClass(somaticVariants, 'VRanges')
-    checkmate::assertClass(structuralVariants, 'GRanges', null.ok = T)
+    checkmate::assertClass(structuralVariants, 'GRanges', null.ok = TRUE)
 
     sprintf('Running CHORD (HRD prediction) for: %s', unique(somaticVariants$sample)) %>% ParallelLogger::logInfo()
 
@@ -57,7 +57,7 @@ performCHORD <- function(somaticVariants, structuralVariants){
     )
 
     # Retrieve CHORD predictions.
-    outputCHORD <- tibble::as_tibble(CHORD::chordPredict(contexts, show.features = T, rf.model = CHORD::CHORD, verbose = T))
+    outputCHORD <- tibble::as_tibble(CHORD::chordPredict(contexts, show.features = TRUE, rf.model = CHORD::CHORD, verbose = TRUE))
 
 
     # Return statement --------------------------------------------------------

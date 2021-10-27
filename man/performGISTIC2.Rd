@@ -33,7 +33,7 @@ This can take anywhere between 30 min. up to several hours depending on the numb
 If you have previously ran GISTIC, use the \link[R2CPCT]{importGISTIC2} function to import and clean the data.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	gisticOutput <- R2CPCT::performGISTIC2(regions = data.Cohort$copyNumbers)
 

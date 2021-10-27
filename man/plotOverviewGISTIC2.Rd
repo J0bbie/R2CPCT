@@ -30,9 +30,9 @@ plotOverviewGISTIC2(
 Generates an overview of the GISTIC2 copy-number landscape.
 }
 \examples{
-\dontrun{
+\donttest{
 
- svg(file = 'overviewCNA.svg', width = 8, height = 8, onefile = T)
+ svg(file = 'overviewCNA.svg', width = 8, height = 8, onefile = TRUE)
  plotGISTIC2(data.GISTIC, 2, ,-2, 0.1)
  dev.off()
 

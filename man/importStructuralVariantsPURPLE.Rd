@@ -4,7 +4,7 @@
 \alias{importStructuralVariantsPURPLE}
 \title{Import the somatic structural variants as estimated by GRIDSS / PURPLE.}
 \usage{
-importStructuralVariantsPURPLE(pathSV, passOnly = T)
+importStructuralVariantsPURPLE(pathSV, passOnly = TRUE)
 }
 \arguments{
 \item{pathSV}{(character): Path to the <sample>.purple.sv.vcf.gz file containing the somatic structural variants as detected by GRIDSS / PURPLE.}
@@ -18,7 +18,7 @@ importStructuralVariantsPURPLE(pathSV, passOnly = T)
 Import the somatic structural variants as estimated by GRIDSS / PURPLE.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	importStructuralVariantsPURPLE(pathSV = '<sample>.purple.sv.vcf.gz')
 
@@ -26,7 +26,7 @@ Import the somatic structural variants as estimated by GRIDSS / PURPLE.
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},

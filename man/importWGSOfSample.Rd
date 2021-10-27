@@ -21,7 +21,7 @@ Imports all the WGS data of a single CPCT-02 sample.
 Also runs CHORD for HRD predictions and ShatterSeek for chromothripsis samples.
 }
 \examples{
-\dontrun{
+\donttest{
 
 	importWGSOfSample(cpctId = '<CPCTID>T', 'combinedData/')
 
@@ -29,7 +29,7 @@ Also runs CHORD for HRD predictions and ShatterSeek for chromothripsis samples.
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},

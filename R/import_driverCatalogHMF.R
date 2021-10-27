@@ -3,7 +3,7 @@
 #' @param pathCatalog (character): Path to the <sample>.driver.catalog.tsv file containing HMF-determined drivers.
 #' @return (tibble) Tibble containing the drivers of the sample.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	importdriverCatalogHMF(pathCatalog = '<sample>.driver.catalog.tsv')
 #'
@@ -16,8 +16,8 @@ importdriverCatalogHMF <- function(pathCatalog){
     # Input validation --------------------------------------------------------
 
     checkmate::assertAccess(pathCatalog, access = 'r')
-
-    geneInfo <- tibble::as_tibble(S4Vectors::mcols(R2CPCT::GENCODE.v35)) %>% dplyr::select(SYMBOL, ENSEMBL)
+    data(GENCODE.v38, package = 'R2CPCT')
+    geneInfo <- tibble::as_tibble(S4Vectors::mcols(GENCODE.v38)) %>% dplyr::select(SYMBOL, ENSEMBL)
 
 
     # Read driver catalog -----------------------------------------------------

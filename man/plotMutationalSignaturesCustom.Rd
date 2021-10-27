@@ -8,10 +8,10 @@ plotMutationalSignaturesCustom(
   mutSigs,
   orderSamples = NULL,
   minContrib = 5,
-  sortOnMeanContrib = T,
+  sortOnMeanContrib = TRUE,
   minMutants = NULL,
   focusOnSig = NULL,
-  onlyShowFocus = F
+  onlyShowFocus = FALSE
 )
 }
 \arguments{

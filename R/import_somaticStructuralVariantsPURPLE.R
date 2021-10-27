@@ -4,7 +4,7 @@
 #' @param passOnly (logical): Only retain SV which were not found in the PON and/or were inferred by copy-number transition  alone or any of the other filters.
 #' @return (GRanges) GRanges object containing the break-ends of the structural variants, so two rows for each SV (except when single break-end).
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	importStructuralVariantsPURPLE(pathSV = '<sample>.purple.sv.vcf.gz')
 #'
@@ -12,7 +12,7 @@
 #' @author Job van Riet \email{j.vanriet@erasmusmc.nl}
 #' @family CPCT
 #' @export
-importStructuralVariantsPURPLE <- function(pathSV, passOnly = T){
+importStructuralVariantsPURPLE <- function(pathSV, passOnly = TRUE){
 
     # Input validation --------------------------------------------------------
 
@@ -30,8 +30,8 @@ importStructuralVariantsPURPLE <- function(pathSV, passOnly = T){
 
     # Convert to GRanges; retain both single and paired break-ends.
     sample.SV <- c(
-        base::suppressWarnings(StructuralVariantAnnotation::breakpointRanges(sample.SV.VCF, unpartneredBreakends = F)),
-        base::suppressWarnings(StructuralVariantAnnotation::breakpointRanges(sample.SV.VCF, unpartneredBreakends = T))
+        base::suppressWarnings(StructuralVariantAnnotation::breakpointRanges(sample.SV.VCF, unpartneredBreakends = FALSE)),
+        base::suppressWarnings(StructuralVariantAnnotation::breakpointRanges(sample.SV.VCF, unpartneredBreakends = TRUE))
     )
 
     # Only count each event once.
@@ -48,7 +48,7 @@ importStructuralVariantsPURPLE <- function(pathSV, passOnly = T){
     sample.SV <- sample.SV[base::order(sample.SV$sourceId),]
 
     # Merge information.
-    S4Vectors::mcols(sample.SV) <- S4Vectors::merge(S4Vectors::mcols(sample.SV), infoSV, by = 'sourceId', all.x = T)
+    S4Vectors::mcols(sample.SV) <- S4Vectors::merge(S4Vectors::mcols(sample.SV), infoSV, by = 'sourceId', all.x = TRUE)
 
     # Should only SV passing all filters (GRIDSS) be imported?
     if(passOnly){

@@ -12,7 +12,7 @@
 #' @param mutantsOnly (logical): Only output records with mutations (CNA, LOH or Muts; TRUE) or return all records (FALSE).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	# Generate a combined gene-level report of an imported WGS cohort (which could be a subset).
 #' 	generateCombinedReport(data.Cohort, results.Cohort$dNdS, results.Cohort$GISTIC2)
@@ -23,7 +23,7 @@
 #'
 #' @author Job van Riet \email{j.vanriet@erasmusmc.nl}
 #' @export
-generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mutantsOnly = T){
+generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mutantsOnly = TRUE){
 
     # Input validation --------------------------------------------------------
 
@@ -58,16 +58,16 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     combinedReport.Copynumbers <- pbapply::pblapply(base::split(somaticData$copyNumbers, somaticData$copyNumbers$sample), function(copyNumbers.Sample){
 
         # Retrieve overlapping genes (using their exons) per CN-segment (min 10bp overlap).
-        overlapCN <- IRanges::findOverlaps(query = R2CPCT::GENCODE.v35.Exons, subject = copyNumbers.Sample, minoverlap = 10, select = 'all')
+        overlapCN <- IRanges::findOverlaps(query = R2CPCT::GENCODE.v38.Exons, subject = copyNumbers.Sample, minoverlap = 10, select = 'all')
 
-        GENCODE.Overlap <- tibble::as_tibble(S4Vectors::mcols(R2CPCT::GENCODE.v35.Exons))
-        GENCODE.Overlap$chr <- as.character(GenomeInfoDb::seqnames(R2CPCT::GENCODE.v35.Exons))
+        GENCODE.Overlap <- tibble::as_tibble(S4Vectors::mcols(R2CPCT::GENCODE.v38.Exons))
+        GENCODE.Overlap$chr <- as.character(GenomeInfoDb::seqnames(R2CPCT::GENCODE.v38.Exons))
 
         # Per overlapping CN-segment, retrieve the exon(s).
         GENCODE.Overlap <- GENCODE.Overlap[S4Vectors::queryHits(overlapCN),]
 
         # Determine width of overlap of gene with CN-segment.
-        overlaps <- IRanges::pintersect(R2CPCT::GENCODE.v35.Exons[S4Vectors::queryHits(overlapCN),], copyNumbers.Sample[S4Vectors::subjectHits(overlapCN)])
+        overlaps <- IRanges::pintersect(R2CPCT::GENCODE.v38.Exons[S4Vectors::queryHits(overlapCN),], copyNumbers.Sample[S4Vectors::subjectHits(overlapCN)])
         GENCODE.Overlap$overlappingWidth <- IRanges::width(overlaps)
 
         # Add the CN-segment copy-number and purity/ploidy-corrected BAF.
@@ -193,7 +193,7 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     combinedReport.Muts[combinedReport.Muts == ''] <- NA
 
     # Determine optimal ENSEMBL / SYMBOL.
-    geneInfo <- tibble::as_tibble(S4Vectors::mcols(R2CPCT::GENCODE.v35)) %>% dplyr::distinct(ENSEMBL.Job = ENSEMBL, SYMBOL.Job = SYMBOL)
+    geneInfo <- tibble::as_tibble(S4Vectors::mcols(R2CPCT::GENCODE.v38)) %>% dplyr::distinct(ENSEMBL.Job = ENSEMBL, SYMBOL.Job = SYMBOL)
 
     combinedReport.Muts <- combinedReport.Muts %>% dplyr::left_join(geneInfo, by = c('ENSEMBL' = 'ENSEMBL.Job'))
     combinedReport.Muts <- combinedReport.Muts %>% dplyr::left_join(geneInfo, by = c('SYMBOL' = 'SYMBOL.Job'))
@@ -236,7 +236,7 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     base::sprintf('Assessing which genes were detected within GISTIC2 peaks.') %>% ParallelLogger::logInfo()
 
     gisticGenes.perSample <- tibble::as_tibble(S4Vectors::mcols(somaticData$GISTIC2)) %>%
-        dplyr::select(GISTIC2Peak = Unique.Name, overlapGenes.GENCODE, dplyr::contains('CPCT', ignore.case = F), dplyr::contains('DRUP', ignore.case = F), dplyr::contains('WIDE', ignore.case = F)) %>%
+        dplyr::select(GISTIC2Peak = Unique.Name, overlapGenes.GENCODE, dplyr::contains('CPCT', ignore.case = FALSE), dplyr::contains('DRUP', ignore.case = FALSE), dplyr::contains('WIDE', ignore.case = FALSE)) %>%
         dplyr::mutate(overlappingGenes = base::gsub(' \\(.*', '', overlapGenes.GENCODE)) %>%
         dplyr::mutate(SYMBOL = base::strsplit(overlappingGenes, ', '), overlappingGenes = NULL, overlapGenes.GENCODE = NULL) %>%
         tidyr::unnest(SYMBOL) %>%
@@ -277,7 +277,7 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
             isMutant = base::ifelse(
                 base::grepl('Deep', Consequence.CNA)|
                     !is.na(Consequence.SV)|
-                    (!is.na(Consequence.Mut) & Consequence.Mut != 'Splice region variant'), T, F),
+                    (!is.na(Consequence.Mut) & Consequence.Mut != 'Splice region variant'), TRUE, FALSE),
             geneId = base::paste(SYMBOL, ENSEMBL, sep = ' - ')
         )
 

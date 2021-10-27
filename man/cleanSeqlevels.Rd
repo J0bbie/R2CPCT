@@ -18,7 +18,7 @@ cleanSeqlevels(g, excludeChr = NULL)
 Removes unused chromosomes, converts seqlevels to UCSC nomenclature and adds chromosomal information.
 }
 \examples{
-\dontrun{
+\donttest{
  gr0 <- GenomicRanges::GRanges(
  S4Vectors::Rle(c('chr2', 'chr2', 'chr1', 'chr3'), c(1, 3, 2, 4)), 
  IRanges::IRanges(1:10, width=10:1)

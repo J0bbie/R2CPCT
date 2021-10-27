@@ -4,7 +4,7 @@
 \alias{fitMutSigs}
 \title{Performs optimal fitting of the contribution of mutational signatures.}
 \usage{
-fitMutSigs(dataMuts, restrictiveFit = F)
+fitMutSigs(dataMuts, restrictiveFit = FALSE)
 }
 \arguments{
 \item{dataMuts}{(VRanges): VRanges containing the mutations which will used as input.}
@@ -22,7 +22,7 @@ Performs mutational signature fitting against the COSMIC / Alexandrov signatures
 It does this for SNV, InDels and MNV patterns.
 }
 \examples{
-\dontrun{
+\donttest{
 
  data.Cohort <- R2CPCT::importWGSOfCohort(<cpctIds>, <combinedData>)
  data.MutSigs <- R2CPCT::fitMutSigs(data.Cohort$somaticVariants)

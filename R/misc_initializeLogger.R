@@ -4,7 +4,7 @@
 #' @param file (character): Path to file where logging will be written to (handy when performing parallel).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #'  initializeLogger()
 #'
@@ -15,7 +15,7 @@ initializeLogger <- function(name = NULL, file = NULL){
 
     # Input validation --------------------------------------------------------
 
-    checkmate::assertCharacter(name, null.ok = T)
+    checkmate::assertCharacter(name, null.ok = TRUE)
     if(!is.null(file)) checkmate::checkFile(file, access = 'rw')
 
 
@@ -36,7 +36,7 @@ initializeLogger <- function(name = NULL, file = NULL){
             ParallelLogger::createLogger(
                 name = name,
                 threshold = "INFO",
-                appenders = list(ParallelLogger::createFileAppender(layout = ParallelLogger::layoutTimestamp, file = file, overwrite = T)))
+                appenders = list(ParallelLogger::createFileAppender(layout = ParallelLogger::layoutTimestamp, file = file, overwrite = TRUE)))
         )
     }
 }

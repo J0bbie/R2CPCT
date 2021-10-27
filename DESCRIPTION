@@ -1,19 +1,20 @@
 Package: R2CPCT
-Date: 2021-06-10
 Type: Package
 Title: Misc. functions to perform import and analysis of WGS and RNA-Seq samples
-Description: This package holds various R functions to perform analysis on samples derived from the CPCT-02 study.
-Version: 0.3.1
-Author: c( person('Job', 'van Riet', email = 'j.vanriet@erasmusmc.nl', role = c('aut', 'cre'))
-Maintainer: Job van Riet <j.vanriet@erasmusmc.nl>
+Description: 
+    This package holds various R functions to perform analysis on samples derived from the CPCT-02 study.
+    Both WGS and RNA-Seq data from the Hartwig Medical Foundation (HMF) can be further processed and analysed using this package.
+Version: 0.3.2
+Authors@R: person('Job', 'van Riet', email = 'j.vanriet@erasmusmc.nl', role = c('aut', 'cre'))
 License: GPL-3
-LazyData: TRUE
+LazyData: FALSE
 Encoding: UTF-8
 Depends:
     plyr (>= 1.8.6),
     dplyr (>= 1.0.3),
-    R (>= 4.0)
-BugReports: https://bitbucket.org/erasmus-mc-medical-oncology/r2cpct/issues
+    R (>= 4.1)
+URL: https://github.com/J0bbie/R2CPCT/
+BugReports: https://github.com/J0bbie/R2CPCT/issues
 Imports:
     devtools (>= 2.3.2),
     XLConnect (>= 1.0.1),
@@ -44,22 +45,22 @@ Remotes:
     github::parklab/ShatterSeek,
     github::UMCUGenetics/MutationalPatterns,
     github::juba/rmdformats,
-    bioc::3.12/Gviz,
-    bioc::3.12/Biostrings,
-    bioc::3.12/DESeq2,
-    bioc::3.12/Biobase,
-    bioc::3.12/rtracklayer,
-    bioc::3.12/GenomeInfoDb,
-    bioc::3.12/GenomicRanges,
-    bioc::3.12/IRanges,
-    bioc::3.12/S4Vectors,
-    bioc::3.12/VariantAnnotation,
-    bioc::3.12/BiocGenerics,
-    bioc::3.12/MutationalPatterns,
-    bioc::3.12/Rsamtools,
-    bioc::3.12/GenomicAlignments,
-    bioc::3.12/graph,
-    bioc::3.12/StructuralVariantAnnotation
+    bioc::3.13/Gviz,
+    bioc::3.13/Biostrings,
+    bioc::3.13/DESeq2,
+    bioc::3.13/Biobase,
+    bioc::3.13/rtracklayer,
+    bioc::3.13/GenomeInfoDb,
+    bioc::3.13/GenomicRanges,
+    bioc::3.13/IRanges,
+    bioc::3.13/S4Vectors,
+    bioc::3.13/VariantAnnotation,
+    bioc::3.13/BiocGenerics,
+    bioc::3.13/MutationalPatterns,
+    bioc::3.13/Rsamtools,
+    bioc::3.13/GenomicAlignments,
+    bioc::3.13/graph,
+    bioc::3.13/StructuralVariantAnnotation
 RoxygenNote: 7.1.2
 Suggests:
     knitr,

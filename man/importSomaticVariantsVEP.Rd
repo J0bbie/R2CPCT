@@ -6,10 +6,10 @@
 \usage{
 importSomaticVariantsVEP(
   pathVCF,
-  passOnly = T,
+  passOnly = TRUE,
   gnomADe = 0.001,
   gnomADg = 0.005,
-  keepAnnotation = T
+  keepAnnotation = TRUE
 )
 }
 \arguments{
@@ -31,12 +31,12 @@ Imports the VCF obtained from HMF and further annotated by VEP.
 The annotation should have been performed using the workflow available at: https://github.com/J0bbie/VariantAnnotation_VEP
 }
 \examples{
-\dontrun{
+\donttest{
 
 	# Path to VEP annotated VCF.
 	path <- '<CPCT#R>_<CPCT#T>_post_processed.hg19_multianno.vcf'
 
-	sampleX.somaticVariants <- importCPCT.somaticVariants(path, passOnly = T)
+	sampleX.somaticVariants <- importCPCT.somaticVariants(path, passOnly = TRUE)
 
 	# View variant annotation.
 	do.call(rbind, sampleX.somaticVariants$annotation)
@@ -45,7 +45,7 @@ The annotation should have been performed using the workflow available at: https
 }
 \seealso{
 Other CPCT: 
-\code{\link{detectKataegis}()},
+\code{\link{detectKataegis_OLD}()},
 \code{\link{findCPCTCenter}()},
 \code{\link{importLINXFusions}()},
 \code{\link{importPurityStatsPURPLE}()},

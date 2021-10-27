@@ -20,7 +20,7 @@ retrieveFilesWGS(pathHMF, pathOutput, cpctIds)
 Retrieves the files (grep) based on CPCT identifiers and symlinks them into the same folder for easier manipulation.
 }
 \examples{
-\dontrun{
+\donttest{
 
  retrieveFilesWGS(
  pathHMF = 'DR-071/rawData/WGS/',

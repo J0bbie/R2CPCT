@@ -8,9 +8,9 @@
 #'
 #' @return (NULL) Plots a Circos figure.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
-#'  svg(file = 'overviewCNA.svg', width = 8, height = 8, onefile = T)
+#'  svg(file = 'overviewCNA.svg', width = 8, height = 8, onefile = TRUE)
 #'  plotGISTIC2(data.GISTIC, 2, ,-2, 0.1)
 #'  dev.off()
 #'
@@ -33,7 +33,7 @@ plotOverviewGISTIC2 <- function(data.GISTIC, maxG = 3, minG = -2, maxQ = 0.1, si
   futile.logger::flog.info('Plotting GISTIC2 profile for %s samples', dplyr::n_distinct(data.GISTIC$gisticBroadScoresPerArm$variable))
   
   # Transform peaks to GRanges and clean-up.
-  cnData <- GenomicRanges::makeGRangesFromDataFrame(data.GISTIC$gisticPeakScores, keep.extra.columns = T)
+  cnData <- GenomicRanges::makeGRangesFromDataFrame(data.GISTIC$gisticPeakScores, keep.extra.columns = TRUE)
   cnData <- GenomeInfoDb::renameSeqlevels(cnData, GenomeInfoDb::mapSeqlevels(GenomeInfoDb::seqlevels(cnData), 'UCSC'))
   GenomeInfoDb::seqlevels(cnData) <- base::gsub('chr23', 'chrX', GenomeInfoDb::seqlevels(cnData))
   GenomeInfoDb::seqlevels(cnData) <- base::gsub('chr24', 'chrY', GenomeInfoDb::seqlevels(cnData))
@@ -52,13 +52,13 @@ plotOverviewGISTIC2 <- function(data.GISTIC, maxG = 3, minG = -2, maxQ = 0.1, si
   
   futile.logger::flog.info('Combining similar segments (might take some time)')
   
-  gisticData.GR <- GenomicRanges::makeGRangesFromDataFrame(gisticData, keep.extra.columns = T)
+  gisticData.GR <- GenomicRanges::makeGRangesFromDataFrame(gisticData, keep.extra.columns = TRUE)
   gisticData.GR$gScore.Rounded <- round(gisticData.GR$gScore, 1)
   gisticData.GR$gScore.Binned <- as.vector(cut(gisticData.GR$gScore, breaks = c(0.01, seq(-100.21, 100, .2))))
   
   gisticData.GR <- GenomicRanges::sort(base::unlist(GenomicRanges::GRangesList(base::lapply(base::split(gisticData.GR, paste(gisticData.GR$gScore.Binned, gisticData.GR$Type)), function(x){
     
-    x.Reduced <- GenomicRanges::reduce(x, drop.empty.ranges = T, min.gapwidth = 1000, with.revmap = T)
+    x.Reduced <- GenomicRanges::reduce(x, drop.empty.ranges = TRUE, min.gapwidth = 1000, with.revmap = TRUE)
     x.Reduced$gScore <- mean(x$gScore.Rounded)
     x.Reduced$Type <- unique(x$Type)
     
@@ -69,11 +69,7 @@ plotOverviewGISTIC2 <- function(data.GISTIC, maxG = 3, minG = -2, maxQ = 0.1, si
   # Convert back to data.frame for plotting.
   gisticData.df <- data.frame(chr = GenomeInfoDb::seqnames(gisticData.GR), start = IRanges::start(gisticData.GR), end = IRanges::end(gisticData.GR), gScore = gisticData.GR$gScore, Type = gisticData.GR$Type)
   
-  # Annotation for the (onco)genes in the wide-peaks.
-  #peakData <- data.frame(chr = GenomeInfoDb::seqnames(data.GISTIC$gisticNarrowPeaksWithAnno), start = IRanges::start(data.GISTIC$gisticNarrowPeaksWithAnno), end = IRanges::end(data.GISTIC$gisticNarrowPeaksWithAnno), genes = sprintf('%s; Peak %s)', gsub('\\)$', '', base::trimws(base::as.character(data.GISTIC$gisticNarrowPeaksWithAnno$overlapGenes.Final))), trimws(gsub('.*[a-z] ', '', data.GISTIC$gisticNarrowPeaksWithAnno$`Unique Name`))), type = ifelse(grepl('Ampl', data.GISTIC$gisticNarrowPeaksWithAnno$`Unique Name`), '#016300FF', '#1673B4FF'), qVal = data.GISTIC$gisticNarrowPeaksWithAnno$`q values`, stringsAsFactors = F)
-  #peakData$genes <- base::gsub('[[:blank:]]\\(', '\n\\(', peakData$genes)
-  
-  peakData <- data.frame(chr = GenomeInfoDb::seqnames(data.GISTIC$gisticNarrowPeaksWithAnno), start = IRanges::start(data.GISTIC$gisticNarrowPeaksWithAnno), end = IRanges::end(data.GISTIC$gisticNarrowPeaksWithAnno), genes = sprintf('Peak %s; %s', trimws(gsub('.*[a-z] ', '', data.GISTIC$gisticNarrowPeaksWithAnno$`Unique Name`)), base::trimws(gsub('\\(.*', '', base::as.character(data.GISTIC$gisticNarrowPeaksWithAnno$overlapGenes.Final)))), type = ifelse(grepl('Ampl', data.GISTIC$gisticNarrowPeaksWithAnno$`Unique Name`), '#016300FF', '#1673B4FF'), qVal = data.GISTIC$gisticNarrowPeaksWithAnno$`q values`, stringsAsFactors = F)
+  peakData <- data.frame(chr = GenomeInfoDb::seqnames(data.GISTIC$gisticNarrowPeaksWithAnno), start = IRanges::start(data.GISTIC$gisticNarrowPeaksWithAnno), end = IRanges::end(data.GISTIC$gisticNarrowPeaksWithAnno), genes = sprintf('Peak %s; %s', trimws(gsub('.*[a-z] ', '', data.GISTIC$gisticNarrowPeaksWithAnno$`Unique Name`)), base::trimws(gsub('\\(.*', '', base::as.character(data.GISTIC$gisticNarrowPeaksWithAnno$overlapGenes.Final)))), type = ifelse(grepl('Ampl', data.GISTIC$gisticNarrowPeaksWithAnno$`Unique Name`), '#016300FF', '#1673B4FF'), qVal = data.GISTIC$gisticNarrowPeaksWithAnno$`q values`, stringsAsFactors = FALSE)
   
   # Clear old plots and settings.
   circlize::circos.clear()

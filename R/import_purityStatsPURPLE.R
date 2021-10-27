@@ -3,7 +3,7 @@
 #' @param pathStats (character): Path to the <sample>.purple.purity.tsv file containing HMF-determined drivers.
 #' @return (tibble) Tibble containing PURPLE statistics of the sample.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' 	importPurityStatsPURPLE(pathStats = '<sample>.purple.purity.tsv')
 #'
