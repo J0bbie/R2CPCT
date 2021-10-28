@@ -21,6 +21,8 @@ fitMutSigs <- function(dataMuts, restrictiveFit = FALSE){
   
   checkmate::assertClass(dataMuts, classes = 'VRanges')
   
+  data('proposedAetiologyCOSMICv3.2', package = 'R2CPCT')
+  
   sprintf('Performing mutational signature fitting on %s unique samples.\nThis can take some minutes.', dplyr::n_distinct(dataMuts$sample)) %>% ParallelLogger::logInfo()
   
   
@@ -132,7 +134,7 @@ fitMutSigs <- function(dataMuts, restrictiveFit = FALSE){
       # Melt.
       tidyr::pivot_longer(cols = !dplyr::contains('Signature'), names_to = 'sampleId', values_to = 'relContribution') %>%
       # Add proposed aetiology.
-      dplyr::left_join(R2CPCT::proposedAetiologyCOSMICv3.2, by = 'Signature')
+      dplyr::left_join(proposedAetiologyCOSMICv3.2, by = 'Signature')
     
     return(relContribution)
     

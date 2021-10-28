@@ -190,7 +190,7 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
         ) %>%
         dplyr::ungroup() %>%
         # Make use of uniform column names.
-        dplyr::mutate(ENSEMBL = Gene, Gene = NULL, SYMBOL = SYMBOL, SYMBOL = NULL) %>%
+        dplyr::mutate(ENSEMBL = Gene, Gene = NULL) %>%
         base::droplevels()
 
     # Replace all empty string characters with NA.
