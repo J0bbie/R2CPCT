@@ -47,8 +47,8 @@ determineMutationalBurden <- function(data.Cohort, minTAF.Muts = 0, minTAF.SV = 
         )
 
     # Determine number of coding and intragenic mutations per sample.
-    perSample.Muts.c <- mutData %>% dplyr::filter(!is.na(ANN.INTRON) | !is.na(ANN.HGVSp), ANN.BIOTYPE == 'protein_coding') %>% dplyr::group_by(sample) %>% dplyr::summarise(totalIntragenicMuts = n()) %>% dplyr::ungroup()
-    perSample.Muts.p <- mutData %>% dplyr::filter(!is.na(ANN.HGVSp), ANN.BIOTYPE == 'protein_coding') %>% dplyr::group_by(sample)%>% dplyr::summarise(totalProteinCodingMuts = n()) %>% dplyr::ungroup()
+    perSample.Muts.c <- mutData %>% dplyr::filter(!is.na(INTRON) | !is.na(HGVSp), BIOTYPE == 'protein_coding') %>% dplyr::group_by(sample) %>% dplyr::summarise(totalIntragenicMuts = dplyr::n()) %>% dplyr::ungroup()
+    perSample.Muts.p <- mutData %>% dplyr::filter(!is.na(HGVSp), BIOTYPE == 'protein_coding') %>% dplyr::group_by(sample)%>% dplyr::summarise(totalProteinCodingMuts = dplyr::n()) %>% dplyr::ungroup()
 
     # Combine the data.
     perSample.Muts <- perSample.Muts %>%

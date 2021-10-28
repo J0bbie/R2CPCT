@@ -24,9 +24,9 @@ fitMutSigs <- function(dataMuts, restrictiveFit = FALSE){
   sprintf('Performing mutational signature fitting on %s unique samples.\nThis can take some minutes.', dplyr::n_distinct(dataMuts$sample)) %>% ParallelLogger::logInfo()
   
   
-  # Retrieve the COSMIC v3.1 signatures -------------------------------------
+  # Retrieve the COSMIC v3.2 signatures -------------------------------------
   
-  sprintf('\tRetrieving COSMIC (v3.1) signature matrices.') %>% ParallelLogger::logInfo()
+  sprintf('\tRetrieving COSMIC (v3.2) signature matrices.') %>% ParallelLogger::logInfo()
   
   mutSigs.COSMIC <- list()
   mutSigs.COSMIC$SNV <- MutationalPatterns::get_known_signatures(muttype = 'snv', source = 'COSMIC', sig_type = 'reference', incl_poss_artifacts = FALSE)

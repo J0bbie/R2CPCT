@@ -32,6 +32,10 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     checkmate::checkList(GISTIC2)
     checkmate::checkNumber(nThreads)
     checkmate::checkLogical(mutantsOnly)
+    
+    data('GENCODE.v38', package = 'R2CPCT')
+    data('GENCODE.v38.Exons', package = 'R2CPCT')
+    data('driverList', package = 'R2CPCT')
 
     base::sprintf('Generating per-sample gene-level overview of various aberrations for %s samples.', dplyr::n_distinct(data.Cohort$somaticVariants$sample)) %>% ParallelLogger::logInfo()
 
@@ -58,16 +62,16 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     combinedReport.Copynumbers <- pbapply::pblapply(base::split(somaticData$copyNumbers, somaticData$copyNumbers$sample), function(copyNumbers.Sample){
 
         # Retrieve overlapping genes (using their exons) per CN-segment (min 10bp overlap).
-        overlapCN <- IRanges::findOverlaps(query = R2CPCT::GENCODE.v38.Exons, subject = copyNumbers.Sample, minoverlap = 10, select = 'all')
+        overlapCN <- IRanges::findOverlaps(query = GENCODE.v38.Exons, subject = copyNumbers.Sample, minoverlap = 10, select = 'all')
 
-        GENCODE.Overlap <- tibble::as_tibble(S4Vectors::mcols(R2CPCT::GENCODE.v38.Exons))
-        GENCODE.Overlap$chr <- as.character(GenomeInfoDb::seqnames(R2CPCT::GENCODE.v38.Exons))
+        GENCODE.Overlap <- tibble::as_tibble(S4Vectors::mcols(GENCODE.v38.Exons))
+        GENCODE.Overlap$chr <- as.character(GenomeInfoDb::seqnames(GENCODE.v38.Exons))
 
         # Per overlapping CN-segment, retrieve the exon(s).
         GENCODE.Overlap <- GENCODE.Overlap[S4Vectors::queryHits(overlapCN),]
 
         # Determine width of overlap of gene with CN-segment.
-        overlaps <- IRanges::pintersect(R2CPCT::GENCODE.v38.Exons[S4Vectors::queryHits(overlapCN),], copyNumbers.Sample[S4Vectors::subjectHits(overlapCN)])
+        overlaps <- IRanges::pintersect(GENCODE.v38.Exons[S4Vectors::queryHits(overlapCN),], copyNumbers.Sample[S4Vectors::subjectHits(overlapCN)])
         GENCODE.Overlap$overlappingWidth <- IRanges::width(overlaps)
 
         # Add the CN-segment copy-number and purity/ploidy-corrected BAF.
@@ -193,7 +197,7 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
     combinedReport.Muts[combinedReport.Muts == ''] <- NA
 
     # Determine optimal ENSEMBL / SYMBOL.
-    geneInfo <- tibble::as_tibble(S4Vectors::mcols(R2CPCT::GENCODE.v38)) %>% dplyr::distinct(ENSEMBL.Job = ENSEMBL, SYMBOL.Job = SYMBOL)
+    geneInfo <- tibble::as_tibble(S4Vectors::mcols(GENCODE.v38)) %>% dplyr::distinct(ENSEMBL.Job = ENSEMBL, SYMBOL.Job = SYMBOL)
 
     combinedReport.Muts <- combinedReport.Muts %>% dplyr::left_join(geneInfo, by = c('ENSEMBL' = 'ENSEMBL.Job'))
     combinedReport.Muts <- combinedReport.Muts %>% dplyr::left_join(geneInfo, by = c('SYMBOL' = 'SYMBOL.Job'))
@@ -227,7 +231,7 @@ generateCombinedReport <- function(data.Cohort, dNdS, GISTIC2, nThreads = 40, mu
         combinedReport.Final <- combinedReport.Final %>% dplyr::left_join(somaticData$driverCatalogHMF %>% dplyr::distinct(ENSEMBL, sample, event.HMF = driver), by = c('ENSEMBL', 'sample'))
     }
     # Add presence within our own combined driver list.
-    driverList <- tibble::as_tibble(S4Vectors::mcols(R2CPCT::driverList)) %>% dplyr::distinct(ENSEMBL, DriverDatabases = SOURCE)
+    driverList <- tibble::as_tibble(S4Vectors::mcols(driverList)) %>% dplyr::distinct(ENSEMBL, DriverDatabases = SOURCE)
     combinedReport.Final <- combinedReport.Final %>% dplyr::left_join(driverList, by = c('ENSEMBL'))
 
 

@@ -25,6 +25,7 @@ retrieveDESeq2Results <- function(DESeq2.Object, contrast, nThreads = 20){
     checkmate::checkCharacter(contrast)
     checkmate::assertInt(nThreads)
     
+    data('GENCODE.v38', package = 'R2CPCT')
     base::sprintf('Retrieving DESeq2 results using IHW-filtering and LFC-shrinkage (ashr).') %>% ParallelLogger::logInfo()
     
     
@@ -52,7 +53,7 @@ retrieveDESeq2Results <- function(DESeq2.Object, contrast, nThreads = 20){
     results.LFC$contrast <- paste(contrast, collapse = '_')
     
     # Add the SYMBOL.
-    results.LFC <- results.LFC %>% dplyr::left_join(tibble::as_tibble(S4Vectors::mcols(R2CPCT::GENCODE.v38)) %>% dplyr::distinct(SYMBOL, ENSEMBL), by = 'ENSEMBL')
+    results.LFC <- results.LFC %>% dplyr::left_join(tibble::as_tibble(S4Vectors::mcols(GENCODE.v38)) %>% dplyr::distinct(SYMBOL, ENSEMBL), by = 'ENSEMBL')
     
     
     # Return statement --------------------------------------------------------

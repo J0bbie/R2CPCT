@@ -29,8 +29,12 @@ importGISTIC2 <- function(gisticFolder){
 
     base::sprintf('Importing GISTIC2 results from: %s', gisticFolder) %>% ParallelLogger::logInfo()
 
+    # Load data.
+    data('GENCODE.v38', package = 'R2CPCT')
+    data('driverList', package = 'R2CPCT')
+    
     # Select protein-coding genes only.
-    GENCODE.v38 <- R2CPCT::GENCODE.v38[R2CPCT::GENCODE.v38$gene_type == 'protein_coding',]
+    GENCODE.v38 <- GENCODE.v38[GENCODE.v38$gene_type == 'protein_coding',]
 
     # Import recurrently-detected peaks ---------------------------------------
 
@@ -55,8 +59,8 @@ importGISTIC2 <- function(gisticFolder){
     overlapGenes.GENCODE <- overlapGenes.GENCODE %>% dplyr::group_by(queryHits) %>% dplyr::summarise(overlappingGenes = paste(unique(unlist(list(stats::na.omit(GENCODE.v38[subjectHits]$SYMBOL)))), collapse = ', '), nGenes = length(unique(unlist(list(stats::na.omit(GENCODE.v38[subjectHits]$ENSEMBL))))))
     overlapGenes.GENCODE$overlappingGenes <- paste(overlapGenes.GENCODE$overlappingGenes, '(GENCODE v38)')
 
-    overlapGenes.Drivers <- tibble::as_tibble(IRanges::findOverlaps(peakSites, R2CPCT::driverList, minoverlap = 10))
-    overlapGenes.Drivers <- overlapGenes.Drivers %>% dplyr::group_by(queryHits) %>% dplyr::summarise(overlappingGenes = paste(unique(unlist(list(stats::na.omit(R2CPCT::driverList[subjectHits]$SYMBOL)))), collapse = ', '), nGenes = length(unique(unlist(list(stats::na.omit(R2CPCT::driverList[subjectHits]$ENSEMBL))))))
+    overlapGenes.Drivers <- tibble::as_tibble(IRanges::findOverlaps(peakSites, driverList, minoverlap = 10))
+    overlapGenes.Drivers <- overlapGenes.Drivers %>% dplyr::group_by(queryHits) %>% dplyr::summarise(overlappingGenes = paste(unique(unlist(list(stats::na.omit(driverList[subjectHits]$SYMBOL)))), collapse = ', '), nGenes = length(unique(unlist(list(stats::na.omit(driverList[subjectHits]$ENSEMBL))))))
     overlapGenes.Drivers$overlappingGenes <- sprintf('%s (Put. Driver; n = %s)', paste(overlapGenes.Drivers$overlappingGenes, ''), overlapGenes.GENCODE[match(overlapGenes.Drivers$queryHits, overlapGenes.GENCODE$queryHits, nomatch = NULL),]$nGenes)
 
     # Add genes to peaks.
