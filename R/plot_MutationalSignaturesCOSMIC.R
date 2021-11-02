@@ -108,13 +108,14 @@ plotMutationalSignaturesCOSMIC <- function(mutSigs, orderSamples = NULL, minCont
             'Spontaneous deamination of 5-methylcytosine (clock-like signature) (SBS1)' = '#85660D',
             'Activity of APOBEC family of cytidine deaminases (SBS2, SBS13)' = '#c11d00',
             'Defective homologous recombination DNA damage repair (SBS3, ID6)' = '#0079c2',
-            'Tobacco smoking (SBS4, ID3)' = '#16FF32',
+            'Tobacco smoking (SBS4, SBS92, ID3)' = '#16FF32',
             'Tobacco smoking and other mutagens (e.g. acetaldehyde) (DBS2)' = '#139c3c',
             'Unknown (clock-like signature) (SBS5)' = '#EBB584',
             'Defective DNA mismatch repair (>4 signatures)' = '#f9b320',
             'Ultraviolet light exposure (>4 signatures)' = 'yellow',
             'Polimerase eta somatic hypermutation activity (SBS9)' = '#A088C3',
             'Polymerase epsilon exonuclease domain mutations (SBS10a, SBS10b, DBS3)' = '#d1cc71',
+            'Defective POLD1 proofreading (SBS10c, SBS10d)' = '#465877',
             'Temozolomide treatment (SBS11)' = '#91E4A6',
             'Concurrent polymerase epsilon mutation and defective DNA mismatch repair (SBS14)' = '#785EF0',
             'Damage by reactive oxygen species (SBS18)' = '#44AA99',
@@ -157,13 +158,15 @@ plotMutationalSignaturesCOSMIC <- function(mutSigs, orderSamples = NULL, minCont
 
     # Sort on signatures (decreasing SBS / DBS numbers).
     mutSigs.Rel <- mutSigs.Rel %>% dplyr::mutate(proposedAetiology = factor(proposedAetiology, levels = names(colors)))
+    
+    colors <- colors[names(colors) %in% unique(mutSigs.Rel$proposedAetiology)]
 
     # Generate the plot.
     plot <- ggplot2::ggplot(mutSigs.Rel, ggplot2::aes(x = sampleId, y = relContribution / 100, fill = proposedAetiology)) +
         ggplot2::geom_bar(stat = 'identity', lwd = .33, color = 'black', width = .8) +
         ggplot2::labs(y = 'Mut. Signatures<br><span style = "font-size:5pt">(Genome-wide)</span>', x = NULL) +
         ggplot2::scale_y_continuous(expand = c(0,0), labels = scales::percent, limits = c(0, ifelse(onlyShowFocus, ceiling(max(mutSigs.Rel$relContribution*2)) / 2 / 100, 1.0001))) +
-        ggplot2::scale_fill_manual(values = colors, guide = ggplot2::guide_legend(title = 'Mutational Signatures (COSMIC v3.1)', title.position = 'top', title.hjust = 0.5, ncol = 2, keywidth = 0.5, keyheight = 0.5), name = NULL) +
+        ggplot2::scale_fill_manual(values = colors, guide = ggplot2::guide_legend(title = 'Mutational Signatures (COSMIC v3.1)', title.position = 'top', title.hjust = 0.5, ncol = 3, keywidth = 0.5, keyheight = 0.5), name = NULL) +
         ggplot2::theme(
             legend.position = 'right',
             legend.direction = 'horizontal',
