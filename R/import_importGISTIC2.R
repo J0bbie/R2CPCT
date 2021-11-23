@@ -62,7 +62,8 @@ importGISTIC2 <- function(gisticFolder){
     overlapGenes.Drivers <- tibble::as_tibble(IRanges::findOverlaps(peakSites, driverList, minoverlap = 10))
     overlapGenes.Drivers <- overlapGenes.Drivers %>% dplyr::group_by(queryHits) %>% dplyr::summarise(overlappingGenes = paste(unique(unlist(list(stats::na.omit(driverList[subjectHits]$SYMBOL)))), collapse = ', '), nGenes = length(unique(unlist(list(stats::na.omit(driverList[subjectHits]$ENSEMBL))))))
     overlapGenes.Drivers$overlappingGenes <- sprintf('%s (Put. Driver; n = %s)', paste(overlapGenes.Drivers$overlappingGenes, ''), overlapGenes.GENCODE[match(overlapGenes.Drivers$queryHits, overlapGenes.GENCODE$queryHits, nomatch = NULL),]$nGenes)
-
+    overlapGenes.Drivers <- overlapGenes.Drivers[overlapGenes.Drivers$queryHits %in% overlapGenes.GENCODE$queryHits,]
+    
     # Add genes to peaks.
     peaksWithOverlap <- peakSites[overlapGenes.GENCODE$queryHits]
 
