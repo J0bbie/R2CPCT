@@ -64,11 +64,12 @@ importSomaticVariantsVEP <- function(pathVCF, passOnly = TRUE, gnomADe = 0.001, 
   
   # Convert annotation to tibble.
   varInfo <- tibble::as_tibble(S4Vectors::mcols(sample.VCF)) %>% 
-    tidyr::separate(ANN, into = c('Allele','Consequence','IMPACT','SYMBOL','Gene','Feature_type','Feature','BIOTYPE','EXON','INTRON','HGVSc','HGVSp','cDNA_position','CDS_position','Protein_position','Amino_acids','Codons','Existing_variation','DISTANCE','STRAND','FLAGS','VARIANT_CLASS','SYMBOL_SOURCE','HGNC_ID','CANONICAL','TSL','APPRIS','CCDS','ENSP','SWISSPROT','TREMBL','UNIPARC','UNIPROT_ISOFORM','SOURCE','GENE_PHENO','DOMAINS','HGVS_OFFSET','CLIN_SIG','SOMATIC','PHENO','PUBMED','HGVSp2','gnomADe','gnomADe_AF','gnomADg','gnomADg_AF','ClinVar','ClinVar_CLNDN','ClinVar_CLNHGVS','ClinVar_CLNSIG'), sep = '\\|') %>% 
+    tidyr::separate(ANN, into = c('Allele','Consequence','IMPACT','SYMBOL','Gene','Feature_type','Feature','BIOTYPE','EXON','INTRON','HGVSc','HGVSp','cDNA_position','CDS_position','Protein_position','Amino_acids','Codons','Existing_variation','DISTANCE','STRAND','FLAGS','VARIANT_CLASS','SYMBOL_SOURCE','HGNC_ID','CANONICAL','TSL','APPRIS','CCDS','ENSP','SWISSPROT','TREMBL','UNIPARC','UNIPROT_ISOFORM','SOURCE','GENE_PHENO','DOMAINS','HGVS_OFFSET','CLIN_SIG','SOMATIC','PHENO','PUBMED','HGVSp2','gnomADe','gnomADe_AF','gnomADg','gnomADg_AF','ClinVar','ClinVar_CLNDN','ClinVar_CLNHGVS','ClinVar_CLNSIG', 'GTF'), sep = '\\|') %>% 
     dplyr::mutate(
       gnomADg_AF = as.numeric(gnomADg_AF),
       gnomADe_AF = as.numeric(gnomADe_AF),
-      HGVSp2 = NULL
+      HGVSp2 = NULL,
+      GTF = NULL
     )
   
   # Remove unused / old annotations (or also present within the ANN fields).
