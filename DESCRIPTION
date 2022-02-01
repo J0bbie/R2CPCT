@@ -4,7 +4,7 @@ Title: Misc. functions to perform import and analysis of WGS and RNA-Seq samples
 Description: 
     This package holds various R functions to perform analysis on samples derived from the CPCT-02 study.
     Both WGS and RNA-Seq data from the Hartwig Medical Foundation (HMF) can be further processed and analysed using this package.
-Version: 0.3.2
+Version: 0.4
 Authors@R: person('Job', 'van Riet', email = 'j.vanriet@erasmusmc.nl', role = c('aut', 'cre'))
 License: GPL-3
 LazyData: FALSE
